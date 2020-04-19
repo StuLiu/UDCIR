@@ -16,8 +16,8 @@ import numpy as np
 
 class PairedData(Dataset):
 	def __init__(self, datadir='data/Train/Toled'):
-		self.X = np.load(os.path.join(datadir, 'LQ/LQ.npy'))
-		self.Y = np.load(os.path.join(datadir, 'HQ/HQ.npy'))
+		self.X = np.load(os.path.join(datadir, 'LQ.npy'))
+		self.Y = np.load(os.path.join(datadir, 'HQ.npy'))
 		assert self.X.shape == self.Y.shape, 'data unpaired'
 		self.datasize = len(self.X)
 
