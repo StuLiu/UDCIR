@@ -71,8 +71,8 @@ if __name__ == '__main__':
 
 	HQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True)
 	LQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/LQ', enhance=True)
-	np.save('data/Train/Toled/HQ/HQ.npy', HQ)
-	np.save('data/Train/Toled/HQ/LQ.npy', LQ)
+	np.save('data/Train/Toled/HQ.npy', HQ)
+	np.save('data/Train/Toled/LQ.npy', LQ)
 	print(HQ.shape, LQ.shape)
 	# cv2.imshow('HQ', HQ[22])
 	# cv2.waitKey(0)
