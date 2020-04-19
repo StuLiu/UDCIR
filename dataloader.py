@@ -11,13 +11,13 @@
 --------------------------------------------------------  
 ''' 
 from torch.utils.data import Dataset
-from utils import read_imgs_from_dir
-import os.path as pt
+import os.path
+import numpy as np
 
 class PairedData(Dataset):
-	def __init__(self, datadir='data/train/Toled'):
-		self.X = read_imgs_from_dir(img_dir_path=pt.join(datadir, 'LQ'))
-		self.Y = read_imgs_from_dir(img_dir_path=pt.join(datadir, 'HQ'))
+	def __init__(self, datadir='data/Train/Toled'):
+		self.X = np.load(os.path.join(datadir, 'LQ/LQ.npy'))
+		self.Y = np.load(os.path.join(datadir, 'HQ/HQ.npy'))
 		assert self.X.shape == self.Y.shape, 'data unpaired'
 		self.datasize = len(self.X)
 
