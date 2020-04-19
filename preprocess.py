@@ -14,9 +14,10 @@ import os
 from glob import glob
 import cv2
 import numpy as np
+from scipy.io import loadmat
 from tqdm import tqdm
 
-def read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ')->np.ndarray:
+def read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True)->np.ndarray:
 	print('>>> read images from {}. <<<'.format(img_dir_path))
 	if not os.path.exists(img_dir_path):
 		raise Exception(" No such file or directory:{0}".format(img_dir_path))
@@ -26,8 +27,16 @@ def read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ')->np.ndarray:
 	img_data_list = []
 	for path in tqdm(img_paths):
 		img_data = cv2.imread(path)    # return the ndarray of image, [high, width, channal(3)]
-		img_data_list.extend(_image_enhance(img_data))
+		if enhance:
+			img_data_list.extend(_image_enhance(img_data))
+		else:
+			img_data_list.extend(img_data)
 	return np.array(img_data_list)
+
+def read_imgs_from_mat(mat_file_path='data/Train/Toled/HQ')->np.ndarray:
+	data_dict = loadmat(mat_file_path)
+	imgs_data = data_dict['val_display']
+	return np.array(imgs_data)
 
 def _image_crop(img)->list:
 	assert img.shape[0]==1024 and img.shape[1]==2048, 'The img is not a UDC photo'
@@ -56,8 +65,12 @@ def _image_enhance(img)->list:
 	return results
 
 if __name__ == '__main__':
-	HQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ')
-	LQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/LQ')
+	# print(read_imgs_from_mat('toled_val_display.mat').shape)
+	# cv2.imshow('LQ', read_imgs_from_mat('toled_val_display.mat')[22])
+	# cv2.waitKey(0)
+
+	HQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True)
+	LQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/LQ', enhance=True)
 	np.save('data/Train/Toled/HQ/HQ.npy', HQ)
 	np.save('data/Train/Toled/HQ/LQ.npy', LQ)
 	print(HQ.shape, LQ.shape)
@@ -65,5 +78,7 @@ if __name__ == '__main__':
 	# cv2.waitKey(0)
 	# cv2.imshow('LQ', LQ[22])
 	# cv2.waitKey(0)
+
+
 
 
