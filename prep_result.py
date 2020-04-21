@@ -18,7 +18,7 @@ def restoration(udc):
     print('udc.shape', udc.shape)
     # cv2.imshow('img', udc)
     # cv2.waitKey(0)
-    data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float()
+    data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float().to(DEVICE)
     model = Restorer(image_c=3, N=64).to(DEVICE)
     model.load_state_dict(torch.load(
         f='pkls/model_1441.pkl',
