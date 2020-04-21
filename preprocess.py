@@ -64,22 +64,25 @@ def _image_enhance(img)->list:
 		results.extend(_image_rotate(img_flipped))
 	return results
 
-if __name__ == '__main__':
-	# print(read_imgs_from_mat('toled_val_display.mat').shape)
-	# cv2.imshow('LQ', read_imgs_from_mat('toled_val_display.mat')[22])
-	# cv2.waitKey(0)
-
-	HQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True)   # (N, h, w, c)
-	LQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/LQ', enhance=True)   # (N, h, w, c)
-	HQ = np.transpose(HQ, (0, 3, 1, 2))
-	LQ = np.transpose(LQ, (0, 3, 1, 2))
-	print(HQ.shape, LQ.shape)
-	np.save('data/Train/Toled/HQ.npy', HQ)
-	np.save('data/Train/Toled/LQ.npy', LQ)
+def _imgs2npy(img_dir_path, enhance, out_path):
+	imgs = read_imgs_from_dir(img_dir_path, enhance=enhance)  # (N, h, w, c)
+	imgs = np.transpose(imgs, (0, 3, 1, 2))
+	print(imgs.shape)
+	np.save(out_path, imgs)
 	# cv2.imshow('HQ', np.transpose(HQ[22], (1, 2, 0)))
 	# cv2.waitKey(0)
 	# cv2.imshow('LQ', np.transpose(LQ[22], (1, 2, 0)))
 	# cv2.waitKey(0)
+	print('saved to npy.')
+
+
+if __name__ == '__main__':
+	# print(read_imgs_from_mat('toled_val_display.mat').shape)
+	# cv2.imshow('LQ', read_imgs_from_mat('toled_val_display.mat')[22])
+	# cv2.waitKey(0)
+	_imgs2npy(img_dir_path='data/Train/Toled/HQ', enhance=True, out_path='data/Train/Toled/HQ.npy')
+	_imgs2npy(img_dir_path='data/Train/Toled/LQ', enhance=True, out_path='data/Train/Toled/LQ.npy')
+
 
 
 
