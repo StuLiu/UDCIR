@@ -40,10 +40,10 @@ def read_imgs_from_mat(mat_file_path='data/Train/Toled/HQ')->np.ndarray:
 
 def _image_crop(img)->list:
 	assert img.shape[0]==1024 and img.shape[1]==2048, 'The img is not a UDC photo'
-	Width = 256
+	Width = 128
 	results = []
-	for i in range(4):
-		for j in range(8):
+	for i in range(8):
+		for j in range(16):
 			results.append(img[i*Width:(i+1)*Width, j*Width:(j+1)*Width, :])
 	return results
 
@@ -59,9 +59,10 @@ def _image_enhance(img)->list:
 	# return imgs_cropped
 	results = []
 	for img_ in imgs_cropped:
-		img_flipped = cv2.flip(img_, 1)     # flip the image around y-axis
-		results.extend(_image_rotate(img_))
-		results.extend(_image_rotate(img_flipped))
+		img_flipped_y = cv2.flip(img_, 1)       # flip the image around y-axis
+		img_flipped_x = cv2.flip(img_, 0)       # flip the image around x-axis
+		img_rotate_clockwise_90 = cv2.flip(cv2.transpose(img), 1)
+		results.extend([img_, img_flipped_y, img_flipped_x, img_rotate_clockwise_90])
 	return results
 
 def _imgs2npy(img_dir_path, enhance, out_path):
