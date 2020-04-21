@@ -7,22 +7,25 @@ import shutil
 import torch
 from scipy.io.matlab.mio import savemat, loadmat
 from model import Restorer
+from torch import from_numpy
 
 print('begin')
 import cv2
 def restoration(udc):
     # TODO: plug in your method here
-    cv2.imshow('img', udc)
-    cv2.waitKey(0)
-    data_batch = np.array([udc]).transpose((0, 3, 1, 2))
+    print('udc.shape', udc.shape)
+    # cv2.imshow('img', udc)
+    # cv2.waitKey(0)
+    data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float()
     model = Restorer(image_c=3, N=64)
     model.load_state_dict(torch.load(
         f='pkls/model_1441.pkl',
         map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu")))
     output_batch = model(data_batch).cpu().numpy()
     result = output_batch.transpose((0, 2, 3, 1))[0,:,:,:]
-    cv2.imshow('img', result)
-    cv2.waitKey(0)
+    print('result.shape', result.shape)
+    # cv2.imshow('img', result)
+    # cv2.waitKey(0)
     return result
 
 
