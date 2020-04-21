@@ -11,13 +11,11 @@
 --------------------------------------------------------  
 ''' 
 
-import sys
 from torch.utils.data import DataLoader
 from dataloader import PairedData
 from model import Restorer
 from trainer import Trainer
 import torch.nn.functional as F
-import cv2
 
 if __name__ == '__main__':
 	# load train data
