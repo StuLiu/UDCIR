@@ -20,9 +20,9 @@ import torch.nn.functional as F
 if __name__ == '__main__':
 	# load train data
 	myDatasets= PairedData(datadir='data/Train/Toled')
-	train_loader = DataLoader(myDatasets, batch_size=16, shuffle=True)
+	train_loader = DataLoader(myDatasets, batch_size=32, shuffle=True)
 	# create model for Image-Restoration
-	model = Restorer(image_c=3, N=8)
+	model = Restorer(image_c=3, N=64)
 	trainer = Trainer(dataloader=train_loader,
 	                  network=model,
 	                  loss_function=F.l1_loss,

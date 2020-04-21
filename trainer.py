@@ -44,12 +44,13 @@ class Trainer(object):
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				if (batch_idx + 1) % 2 == 0:
+				batch_idx_global = batch_idx + (epoch - 1) * len(self.dataloader)
+				if (batch_idx + 1) % 100 == 0:
 					sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.6f}'.format(
 						epoch, batch_idx * len(data), len(self.dataloader.dataset),
 						100. * batch_idx / len(self.dataloader), loss_batch.item()))
 					with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
-						batch_idx_global = batch_idx + (epoch - 1) * len(self.dataloader)
+
 						writer.add_scalar('Loss', loss_batch.item(), batch_idx_global)
 						with torch.no_grad():
 							writer.add_scalar(
