@@ -13,6 +13,7 @@
 from torch.utils.data import Dataset
 import os.path
 import numpy as np
+from torch import from_numpy
 
 class PairedData(Dataset):
 	def __init__(self, datadir='data/Train/Toled'):
@@ -20,9 +21,10 @@ class PairedData(Dataset):
 		self.Y = np.load(os.path.join(datadir, 'HQ.npy'))
 		assert self.X.shape == self.Y.shape, 'data unpaired'
 		self.datasize = len(self.X)
+		print('Loaded {} paired data from {}.'.format(self.datasize, datadir))
 
 	def __len__(self):
 		return self.datasize
 
 	def __getitem__(self, idx):
-		return self.X[idx], self.Y[idx]
+		return from_numpy(self.X[idx]).float(), from_numpy(self.Y[idx]).float()

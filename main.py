@@ -74,12 +74,22 @@ def MNIST_Test():
 	model = trainer.train()
 	tester = Tester(test_loader, model, [acc])
 	tester.test()
-
+import cv2
 if __name__ == '__main__':
-	train_loader = DataLoader(PairedData(), batch_size=8, shuffle=True)
-	model = ConvNet()
-	trainer = Trainer(dataloader=train_loader,
-	                  network=model,
-	                  loss_function=F.nll_loss,
-	                  epoch=10)
-	model = trainer.train()
+	# load train data
+	myDatasets= PairedData(datadir='data/Train/Toled')
+	print(len(myDatasets))
+	train_loader = DataLoader(myDatasets, batch_size=32, shuffle=True)
+	# model = ConvNet()
+	# trainer = Trainer(dataloader=train_loader,
+	#                   network=model,
+	#                   loss_function=F.nll_loss,
+	#                   epoch=10)
+	# model = trainer.train()
+
+	# for i, (lq, hq) in enumerate(train_loader):
+	# 	print(lq.shape, hq.shape)
+	# 	cv2.imshow('LR', lq.numpy()[0,:,:,:])
+	# 	cv2.waitKey(0)
+	# 	cv2.imshow('HR', hq.numpy()[0,:,:,:])
+	# 	cv2.waitKey(0)

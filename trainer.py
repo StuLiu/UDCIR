@@ -12,7 +12,9 @@
 '''
 import sys
 import torch
-import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.tensorboard import SummaryWriter
+from utils import compute_PSNR
 
 class Trainer(object):
 	""" The class to train networks"""
@@ -22,7 +24,7 @@ class Trainer(object):
 	             optimizer=torch.optim.Adam,
 	             learning_rate=1.0e-4,
 	             epoch=1000,
-	             loss_function=nn.MSELoss()):
+	             loss_function=F.mse_loss):
 		self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 		print('device:', self.device)
 		self.dataloader = dataloader
@@ -35,20 +37,21 @@ class Trainer(object):
 	def train(self):
 		self.net.train()
 		for epoch in range(1, self.epoch + 1):
-			loss_epoch = 0
 			for batch_idx, (data, target) in enumerate(self.dataloader):
 				data, target = data.to(self.device), target.to(self.device)
 				self.opt.zero_grad()
 				output = self.net(data)
-				loss = self.loss_F(output, target)
-				loss.backward()
+				loss_batch = self.loss_F(output, target)
+				loss_batch.backward()
 				self.opt.step()
-				loss_epoch += loss.item()
-				if (batch_idx + 1) % 100 == 0:
+				if (batch_idx + 1) % 2 == 0:
 					sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.6f}'.format(
 						epoch, batch_idx * len(data), len(self.dataloader.dataset),
-						100. * batch_idx / len(self.dataloader),
-						loss_epoch / (batch_idx * len(data)))
-					)
+						100. * batch_idx / len(self.dataloader), loss_batch.item()))
+					with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
+						batch_idx_global = batch_idx + (epoch - 1) * len(self.dataloader)
+						writer.add_scalar('Loss', loss_batch.item(), batch_idx_global)
+						writer.add_scalar('PSNR', compute_PSNR(target.numpy(), output.numpy()),
+						                  batch_idx_global)
 			sys.stdout.write('\n')
 		return self.net

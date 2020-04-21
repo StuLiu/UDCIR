@@ -10,10 +10,29 @@
 @Desciption  : None
 --------------------------------------------------------  
 ''' 
-
-import torch
+from collections import OrderedDict
 import torch.nn as nn
-import torch.nn.functional as F
+
+class Restorer(nn.Module):
+	""" The nueral network for real-time image restoration. """
+	def __init__(self, image_c=3, N=64):
+		super(Restorer, self).__init__()
+		# def the operations in network
+		self.conv_0 = nn.Conv2d(image_c, N, (3, 3), stride=1, padding=1)
+		self.relu_0 = nn.LeakyReLU(0.2)
+		feature_extract_layers = OrderedDict()
+		for i in range(5):
+			feature_extract_layers['conv_{}'.format(i + 1)] = nn.Conv2d(
+				N, N, (3, 3), stride=1, padding=1 )
+			feature_extract_layers['relu_{}'.format(i + 1)] = nn.LeakyReLU(0.2)
+		self.feature_extract_block = nn.Sequential(feature_extract_layers)
+		self.conv_end = nn.Conv2d(N, image_c, (3, 3), stride=1, padding=1)
+
+	def forward(self, x):
+		fm_0 = self.relu_0(self.conv_0(x))
+		fm_1 = self.feature_extract_block(fm_0)
+		fm_end = self.conv_end(fm_1)
+		return x + fm_end
 
 class BaseModel(nn.Module):
 	def __init__(self, batch_size, image_h, image_w, image_c, scale_rate):

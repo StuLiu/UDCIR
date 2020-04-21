@@ -45,7 +45,6 @@ def _image_crop(img)->list:
 	for i in range(4):
 		for j in range(8):
 			results.append(img[i*Width:(i+1)*Width, j*Width:(j+1)*Width, :])
-	print(results[0].shape)
 	return results
 
 def _image_rotate(img)->list:
@@ -57,6 +56,7 @@ def _image_rotate(img)->list:
 
 def _image_enhance(img)->list:
 	imgs_cropped = _image_crop(img)
+	# return imgs_cropped
 	results = []
 	for img_ in imgs_cropped:
 		img_flipped = cv2.flip(img_, 1)     # flip the image around y-axis
@@ -69,15 +69,17 @@ if __name__ == '__main__':
 	# cv2.imshow('LQ', read_imgs_from_mat('toled_val_display.mat')[22])
 	# cv2.waitKey(0)
 
-	HQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True)
-	LQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/LQ', enhance=True)
+	HQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True)   # (N, h, w, c)
+	LQ = read_imgs_from_dir(img_dir_path='data/Train/Toled/LQ', enhance=True)   # (N, h, w, c)
+	HQ = np.transpose(HQ, (0, 3, 1, 2))
+	LQ = np.transpose(LQ, (0, 3, 1, 2))
+	print(HQ.shape, LQ.shape)
 	np.save('data/Train/Toled/HQ.npy', HQ)
 	np.save('data/Train/Toled/LQ.npy', LQ)
-	print(HQ.shape, LQ.shape)
-	# cv2.imshow('HQ', HQ[22])
-	# cv2.waitKey(0)
-	# cv2.imshow('LQ', LQ[22])
-	# cv2.waitKey(0)
+	cv2.imshow('HQ', np.transpose(HQ[22], (1, 2, 0)))
+	cv2.waitKey(0)
+	cv2.imshow('LQ', np.transpose(LQ[22], (1, 2, 0)))
+	cv2.waitKey(0)
 
 
 
