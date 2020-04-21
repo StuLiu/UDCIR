@@ -64,7 +64,7 @@ def _image_enhance(img)->list:
 		img_flipped_xy = cv2.flip(img_, -1)  # flip the image around x-axis
 		results.extend([img_, img_flipped_xy])
 		# results.extend([img_, img_flipped_y, img_flipped_x, img_flipped_xy])
-	print(np.array(results).shape)
+	# print(np.array(results).shape)
 	return results
 
 def _imgs2npy(img_dir_path, enhance, out_path):
