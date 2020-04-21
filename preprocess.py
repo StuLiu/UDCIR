@@ -30,7 +30,7 @@ def read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True)->np.nda
 		if enhance:
 			img_data_list.extend(_image_enhance(img_data))
 		else:
-			img_data_list.extend(img_data)
+			img_data_list.extend([img_data])
 	return np.array(img_data_list)
 
 def read_imgs_from_mat(mat_file_path='data/Train/Toled/HQ')->np.ndarray:
@@ -76,10 +76,10 @@ if __name__ == '__main__':
 	print(HQ.shape, LQ.shape)
 	np.save('data/Train/Toled/HQ.npy', HQ)
 	np.save('data/Train/Toled/LQ.npy', LQ)
-	cv2.imshow('HQ', np.transpose(HQ[22], (1, 2, 0)))
-	cv2.waitKey(0)
-	cv2.imshow('LQ', np.transpose(LQ[22], (1, 2, 0)))
-	cv2.waitKey(0)
+	# cv2.imshow('HQ', np.transpose(HQ[22], (1, 2, 0)))
+	# cv2.waitKey(0)
+	# cv2.imshow('LQ', np.transpose(LQ[22], (1, 2, 0)))
+	# cv2.waitKey(0)
 
 
 
