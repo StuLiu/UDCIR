@@ -21,7 +21,8 @@ def restoration(udc):
     model.load_state_dict(torch.load(
         f='pkls/model_1441.pkl',
         map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu")))
-    output_batch = model(data_batch).cpu().numpy()
+    with torch.no_grad():
+        output_batch = model(data_batch).cpu().numpy()
     result = output_batch.transpose((0, 2, 3, 1))[0,:,:,:]
     print('result.shape', result.shape)
     # cv2.imshow('img', result)
