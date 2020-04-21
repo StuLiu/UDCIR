@@ -12,6 +12,14 @@
 '''
 import math
 import numpy as np
+import os.path
+import shutil
+import torch
+from scipy.io.matlab.mio import savemat, loadmat
+from model import Restorer
+from torch import from_numpy
+import cv2
+
 
 def compute_PSNR(img1, img2)->float:
 	assert img1.shape == img2.shape
@@ -20,3 +28,14 @@ def compute_PSNR(img1, img2)->float:
 	if mse == 0:
 		return float('inf')
 	return 20 * math.log10(255.0 / math.sqrt(mse))
+
+def show_mat(mat_file_path='./res_dir/results.mat', key='results'):
+	mat_data = loadmat(mat_file_path)[key]
+	print(mat_data.shape)
+	for i in range(len(mat_data)):
+		cv2.imshow('result', mat_data[i])
+		cv2.waitKey(0)
+
+if __name__ == '__main__':
+	# show_mat(mat_file_path='./toled_val_display.mat', key='val_display')
+	show_mat(mat_file_path='./res_dir/results.mat', key='results')
