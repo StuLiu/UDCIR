@@ -59,10 +59,11 @@ def _image_enhance(img)->list:
 	# return imgs_cropped
 	results = []
 	for img_ in imgs_cropped:
-		img_flipped_y = cv2.flip(img_, 1)       # flip the image around y-axis
-		img_flipped_x = cv2.flip(img_, 0)       # flip the image around x-axis
+		# img_flipped_y = cv2.flip(img_, 1)       # flip the image around y-axis
+		# img_flipped_x = cv2.flip(img_, 0)       # flip the image around x-axis
 		img_flipped_xy = cv2.flip(img_, -1)  # flip the image around x-axis
-		results.extend([img_, img_flipped_y, img_flipped_x, img_flipped_xy])
+		results.extend([img_, img_flipped_xy])
+		# results.extend([img_, img_flipped_y, img_flipped_x, img_flipped_xy])
 	print(np.array(results).shape)
 	return results
 
