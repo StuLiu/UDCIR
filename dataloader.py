@@ -33,7 +33,7 @@ class PairedData(Dataset):
 if __name__ == '__main__':
 	# load train data
 	myDatasets= PairedData(datadir='data/Train/Toled')
-	train_loader = DataLoader(myDatasets, batch_size=32, shuffle=True)
+	train_loader = DataLoader(myDatasets, batch_size=64, shuffle=True)
 	x_eval, y_eval = [], []
 	for i, (x, y) in enumerate(train_loader):
 		print(x.shape, y.shape)

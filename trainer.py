@@ -31,6 +31,7 @@ class Trainer(object):
 		print('device:', self.device)
 		self.train_data_loader = train_data_loader
 		self.eval_data_loader = eval_data_loader
+		print(len(self.train_data_loader), len(self.eval_data_loader))
 		self.net = network.to(self.device)
 		self.lr = learning_rate
 		self.opt = optimizer(self.net.parameters(), lr=self.lr)
@@ -39,6 +40,7 @@ class Trainer(object):
 		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=5, gamma=0.9)
 
 	def train(self):
+		print('Do training...')
 		self.net.train()
 		for epoch in range(1, self.epoch + 1):
 			for batch_idx, (data, target) in enumerate(self.train_data_loader):
@@ -48,27 +50,28 @@ class Trainer(object):
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				if (batch_idx + 1) % 20 == 0:
-					self._flush_and_save(epoch, batch_idx)
+				if (batch_idx + 1) % 1 == 0:
+					self._eval_and_save(epoch, batch_idx)
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
 		return self.net
 
-	def _flush_and_save(self, epoch, batch_idx):
+	def _eval_and_save(self, epoch, batch_idx):
 		batch_idx_global = batch_idx + (epoch - 1) * len(self.train_data_loader)
 		with torch.no_grad():
 			eval_loss_sum = 0
 			for batch_idx_eval, (data_eval, target_eval) in enumerate(self.eval_data_loader):
+				data_eval, target_eval = data_eval.to(self.device), target_eval.to(self.device)
 				output_eval = self.net(data_eval)
 				eval_loss_sum += self.loss_F(output_eval, target_eval).item()
+			eval_loss = eval_loss_sum / len(self.eval_data_loader)
 			sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.8f}'.format(
-				epoch, batch_idx * len(data_eval),
-				len(self.train_data_loader),
+				epoch, batch_idx, len(self.train_data_loader),
 				100. * batch_idx / len(self.train_data_loader),
-				eval_loss_sum / len(self.eval_data_loader)))
+				eval_loss))
 			with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
 				writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'], batch_idx_global)
-				writer.add_scalar('Loss', eval_loss_sum / len(self.eval_data_loader), batch_idx_global)
+				writer.add_scalar('Loss', eval_loss, batch_idx_global)
 				writer.add_scalar(
 					'PSNR', compute_PSNR(target_eval.cpu().numpy(), output_eval.cpu().numpy()),
 					batch_idx_global
