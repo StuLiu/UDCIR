@@ -51,7 +51,7 @@ class Trainer(object):
 					with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
 						batch_idx_global = batch_idx + (epoch - 1) * len(self.dataloader)
 						writer.add_scalar('Loss', loss_batch.item(), batch_idx_global)
-						writer.add_scalar('PSNR', compute_PSNR(target.numpy(), output.numpy()),
+						writer.add_scalar('PSNR', compute_PSNR(target.cpu().numpy(), output.cpu().numpy()),
 						                  batch_idx_global)
 			sys.stdout.write('\n')
 		return self.net
