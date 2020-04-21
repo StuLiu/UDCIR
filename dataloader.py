@@ -36,10 +36,13 @@ if __name__ == '__main__':
 	train_loader = DataLoader(myDatasets, batch_size=32, shuffle=True)
 	x_eval, y_eval = [], []
 	for i, (x, y) in enumerate(train_loader):
-		x_eval.append(x)
-		y_eval.append(y)
+		print(x.shape, y.shape)
+		x_eval.append(x.numpy())
+		y_eval.append(y.numpy())
 		if i >= 4:
 			break
 	x_eval = np.array(x_eval).reshape((-1, 3, 128, 128))
 	y_eval = np.array(y_eval).reshape((-1, 3, 128, 128))
 	print(x_eval.shape, y_eval.shape)
+	np.save('data/Eval/Toled/LQ.npy', x_eval)
+	np.save('data/Eval/Toled/HQ.npy', y_eval)
