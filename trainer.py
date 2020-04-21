@@ -20,7 +20,8 @@ from utils import compute_PSNR
 class Trainer(object):
 	""" The class to train networks"""
 	def __init__(self,
-	             dataloader,
+	             train_data_loader,
+	             eval_data_loader,
 	             network,
 	             optimizer=torch.optim.Adam,
 	             learning_rate=1.0e-4,
@@ -28,7 +29,8 @@ class Trainer(object):
 	             loss_function=F.mse_loss):
 		self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 		print('device:', self.device)
-		self.dataloader = dataloader
+		self.train_data_loader = train_data_loader
+		self.eval_data_loader = eval_data_loader
 		self.net = network.to(self.device)
 		self.lr = learning_rate
 		self.opt = optimizer(self.net.parameters(), lr=self.lr)
@@ -39,28 +41,37 @@ class Trainer(object):
 	def train(self):
 		self.net.train()
 		for epoch in range(1, self.epoch + 1):
-			for batch_idx, (data, target) in enumerate(self.dataloader):
+			for batch_idx, (data, target) in enumerate(self.train_data_loader):
 				data, target = data.to(self.device), target.to(self.device)
 				self.opt.zero_grad()
 				output = self.net(data)
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				batch_idx_global = batch_idx + (epoch - 1) * len(self.dataloader)
 				if (batch_idx + 1) % 20 == 0:
-					sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.6f}'.format(
-						epoch, batch_idx * len(data), len(self.dataloader.dataset),
-						100. * batch_idx / len(self.dataloader), loss_batch.item()))
-					with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
-						writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'],
-						                  batch_idx_global)
-						with torch.no_grad():
-							writer.add_scalar('Loss', loss_batch.item(), batch_idx_global)
-							writer.add_scalar(
-								'PSNR', compute_PSNR(target.cpu().numpy(), output.cpu().numpy()),
-						        batch_idx_global
-							)
-					torch.save(self.net.state_dict(), './model.pkl')
+					self._flush_and_save(epoch, batch_idx)
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
 		return self.net
+
+	def _flush_and_save(self, epoch, batch_idx):
+		batch_idx_global = batch_idx + (epoch - 1) * len(self.train_data_loader)
+		with torch.no_grad():
+			eval_loss_sum = 0
+			for batch_idx_eval, (data_eval, target_eval) in enumerate(self.eval_data_loader):
+				output_eval = self.net(data_eval)
+				eval_loss_sum += self.loss_F(output_eval, target_eval).item()
+			sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.8f}'.format(
+				epoch, batch_idx * len(data_eval),
+				len(self.train_data_loader),
+				100. * batch_idx / len(self.train_data_loader),
+				eval_loss_sum / len(self.eval_data_loader)))
+			with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
+				writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'], batch_idx_global)
+				writer.add_scalar('Loss', eval_loss_sum / len(self.eval_data_loader), batch_idx_global)
+				writer.add_scalar(
+					'PSNR', compute_PSNR(target_eval.cpu().numpy(), output_eval.cpu().numpy()),
+					batch_idx_global
+				)
+			torch.save(self.net.state_dict(), './pkls/model_{}.pkl'.format(batch_idx_global))
+

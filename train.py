@@ -23,7 +23,8 @@ if __name__ == '__main__':
 	train_loader = DataLoader(myDatasets, batch_size=32, shuffle=True)
 	# create model for Image-Restoration
 	model = Restorer(image_c=3, N=64)
-	trainer = Trainer(dataloader=train_loader,
+	trainer = Trainer(train_data_loader=train_loader,
+	                  eval_data_loader=train_loader,
 	                  network=model,
 	                  loss_function=F.l1_loss,
 	                  epoch=400)
