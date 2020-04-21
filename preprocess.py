@@ -40,10 +40,10 @@ def read_imgs_from_mat(mat_file_path='data/Train/Toled/HQ')->np.ndarray:
 
 def _image_crop(img)->list:
 	assert img.shape[0]==1024 and img.shape[1]==2048, 'The img is not a UDC photo'
-	Width = 128
+	Width = 256
 	results = []
-	for i in range(8):
-		for j in range(16):
+	for i in range(4):
+		for j in range(8):
 			results.append(img[i*Width:(i+1)*Width, j*Width:(j+1)*Width, :])
 	return results
 
