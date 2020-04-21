@@ -52,14 +52,15 @@ class Trainer(object):
 						epoch, batch_idx * len(data), len(self.dataloader.dataset),
 						100. * batch_idx / len(self.dataloader), loss_batch.item()))
 					with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
-						writer.add_scalar('Loss', loss_batch.item(), batch_idx_global)
 						writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'],
 						                  batch_idx_global)
 						with torch.no_grad():
+							writer.add_scalar('Loss', loss_batch.item(), batch_idx_global)
 							writer.add_scalar(
 								'PSNR', compute_PSNR(target.cpu().numpy(), output.cpu().numpy()),
 						        batch_idx_global
 							)
+					torch.save(self.net.state_dict(), './model.pkl')
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
 		return self.net
