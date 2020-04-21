@@ -13,6 +13,7 @@
 import sys
 import torch
 import torch.nn.functional as F
+import torch.optim.lr_scheduler as lr_scheduler
 from torch.utils.tensorboard import SummaryWriter
 from utils import compute_PSNR
 
@@ -33,6 +34,7 @@ class Trainer(object):
 		self.opt = optimizer(self.net.parameters(), lr=self.lr)
 		self.epoch = epoch
 		self.loss_F = loss_function
+		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=5, gamma=0.9)
 
 	def train(self):
 		self.net.train()
@@ -45,17 +47,19 @@ class Trainer(object):
 				loss_batch.backward()
 				self.opt.step()
 				batch_idx_global = batch_idx + (epoch - 1) * len(self.dataloader)
-				if (batch_idx + 1) % 100 == 0:
+				if (batch_idx + 1) % 20 == 0:
 					sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.6f}'.format(
 						epoch, batch_idx * len(data), len(self.dataloader.dataset),
 						100. * batch_idx / len(self.dataloader), loss_batch.item()))
 					with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
-
 						writer.add_scalar('Loss', loss_batch.item(), batch_idx_global)
+						writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'],
+						                  batch_idx_global)
 						with torch.no_grad():
 							writer.add_scalar(
 								'PSNR', compute_PSNR(target.cpu().numpy(), output.cpu().numpy()),
 						        batch_idx_global
 							)
 			sys.stdout.write('\n')
+			self.scheduler.step(epoch)
 		return self.net
