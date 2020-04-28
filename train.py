@@ -29,5 +29,5 @@ if __name__ == '__main__':
 	                  eval_data_loader=eval_loader,
 	                  network=model,
 	                  loss_function=F.l1_loss,
-	                  epoch=400)
+	                  epoch=40)
 	model = trainer.train()

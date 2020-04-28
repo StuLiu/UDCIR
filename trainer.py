@@ -37,7 +37,7 @@ class Trainer(object):
 		self.opt = optimizer(self.net.parameters(), lr=self.lr)
 		self.epoch = epoch
 		self.loss_F = loss_function
-		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=5, gamma=0.9)
+		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=1, gamma=0.9)
 
 	def train(self):
 		print('Do training...')
