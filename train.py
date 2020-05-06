@@ -21,14 +21,14 @@ if __name__ == '__main__':
 	# load train data
 	train_datasets= PairedData(datadir='data/Train/Toled')
 	eval_datasets= PairedData(datadir='data/Eval/Toled')
-	train_loader = DataLoader(train_datasets, batch_size=64, shuffle=True)
-	eval_loader = DataLoader(eval_datasets, batch_size=64, shuffle=False)
+	train_loader = DataLoader(train_datasets, batch_size=32, shuffle=True)
+	eval_loader = DataLoader(eval_datasets, batch_size=32, shuffle=False)
 	# create model for Image-Restoration
 	model = Generator(image_c=3, N=64)
 	trainer = Trainer(train_data_loader=train_loader,
 	                  eval_data_loader=eval_loader,
 	                  network=model,
 	                  loss_function=F.l1_loss,
-	                  epoch=40,
+	                  epoch=50,
 	                  pkls_path='./pkls/toy_net/')
 	model = trainer.train()
