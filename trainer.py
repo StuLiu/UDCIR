@@ -10,7 +10,7 @@
 @Desciption  : None
 --------------------------------------------------------  
 '''
-import sys
+import sys, os
 import torch
 import torch.nn.functional as F
 import torch.optim.lr_scheduler as lr_scheduler
@@ -26,7 +26,8 @@ class Trainer(object):
 	             optimizer=torch.optim.Adam,
 	             learning_rate=1.0e-4,
 	             epoch=1000,
-	             loss_function=F.mse_loss):
+	             loss_function=F.mse_loss,
+	             pkls_path='./pkls/'):
 		self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 		print('device:', self.device)
 		self.train_data_loader = train_data_loader
@@ -37,6 +38,9 @@ class Trainer(object):
 		self.opt = optimizer(self.net.parameters(), lr=self.lr)
 		self.epoch = epoch
 		self.loss_F = loss_function
+		self.pkls_path = pkls_path
+		if not os.path.exists(self.pkls_path):
+			os.makedirs(self.pkls_path)
 		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=1, gamma=0.9)
 
 	def train(self):
@@ -76,5 +80,6 @@ class Trainer(object):
 					'PSNR', compute_PSNR(target_eval.cpu().numpy(), output_eval.cpu().numpy()),
 					batch_idx_global
 				)
-			torch.save(self.net.state_dict(), './pkls/model_{}.pkl'.format(batch_idx_global))
+			torch.save(self.net.state_dict(), os.path.join(self.pkls_path,
+			                                               'model_{}.pkl'.format(batch_idx_global)))
 
