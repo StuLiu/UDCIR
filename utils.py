@@ -16,7 +16,6 @@ import os.path
 import shutil
 import torch
 from scipy.io.matlab.mio import savemat, loadmat
-from model import Restorer
 from torch import from_numpy
 import cv2
 
