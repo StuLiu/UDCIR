@@ -13,7 +13,7 @@
 
 from torch.utils.data import DataLoader
 from dataloader import PairedData
-from model import Restorer
+from model import Generator
 from trainer import Trainer
 import torch.nn.functional as F
 
@@ -24,10 +24,11 @@ if __name__ == '__main__':
 	train_loader = DataLoader(train_datasets, batch_size=64, shuffle=True)
 	eval_loader = DataLoader(eval_datasets, batch_size=64, shuffle=False)
 	# create model for Image-Restoration
-	model = Restorer(image_c=3, N=64)
+	model = Generator(image_c=3, N=64)
 	trainer = Trainer(train_data_loader=train_loader,
 	                  eval_data_loader=eval_loader,
 	                  network=model,
 	                  loss_function=F.l1_loss,
-	                  epoch=40)
+	                  epoch=40,
+	                  pkls_path='./pkls/toy_net/')
 	model = trainer.train()
