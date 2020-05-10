@@ -28,14 +28,14 @@ class UNet(nn.Module):
 			nn.Conv2d(N, N, (3, 3), stride=1, padding=1),
 			nn.LeakyReLU(0.2),
 			# step_1
-			nn.Conv2d(N, N * 2, (3, 3), stride=2, padding=1),
+			nn.Conv2d(N, N * 2, (3, 3), stride=2, padding=2),
 			nn.LeakyReLU(0.2),
 			nn.Conv2d(N * 2, N * 2, (3, 3), stride=1, padding=1),
 			nn.LeakyReLU(0.2),
 			nn.Conv2d(N * 2, N * 2, (3, 3), stride=1, padding=1),
 			nn.LeakyReLU(0.2),
 			# step_2
-			nn.Conv2d(N * 2, N * 4, (3, 3), stride=2, padding=1),
+			nn.Conv2d(N * 2, N * 4, (3, 3), stride=2, padding=2),
 			nn.LeakyReLU(0.2),
 			nn.Conv2d(N * 4, N * 4, (3, 3), stride=1, padding=1),
 			nn.LeakyReLU(0.2),
