@@ -69,7 +69,7 @@ class Trainer(object):
 				output_eval = self.net(data_eval)
 				eval_loss_sum += self.loss_F(output_eval, target_eval).item()
 			eval_loss = eval_loss_sum / len(self.eval_data_loader)
-			sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.8f}'.format(
+			sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\t\tLoss: {:.8f}'.format(
 				epoch, batch_idx, len(self.train_data_loader),
 				100. * batch_idx / len(self.train_data_loader),
 				eval_loss))

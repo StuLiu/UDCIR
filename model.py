@@ -16,7 +16,7 @@ import torch
 
 class UNet(nn.Module):
 	""" The UNet module"""
-	def __init__(self, input_c=3, output_c=3, N=32):
+	def __init__(self, input_c=3, output_c=3, N=64):
 		super(UNet, self).__init__()
 		# def the operations in UNet
 		self.conv_0 = nn.Conv2d(input_c, N, (3, 3), stride=1, padding=1)
