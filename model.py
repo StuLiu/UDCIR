@@ -17,11 +17,11 @@ import torch.nn.functional as F
 
 class Step(nn.Module):
 
-	def __init__(self, in_c, out_c, N):
+	def __init__(self, N):
 		super(Step, self).__init__()
-		self.conv_0 = nn.Conv2d(in_c, N, kernel_size=3, stride=1, padding=1)
+		self.conv_0 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
 		self.conv_1 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
-		self.conv_2 = nn.Conv2d(N, out_c, kernel_size=3, stride=1, padding=1)
+		self.conv_2 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
 
 	def forward(self, x):
 		x1 = F.leaky_relu(self.conv_0(x), 0.2)
@@ -34,23 +34,26 @@ class UNet(nn.Module):
 	def __init__(self, input_c=3, output_c=3, N=64):
 		super(UNet, self).__init__()
 		# def the operations in UNet
-		self.step_0 = Step(in_c=input_c, out_c=N, N=N)
+		self.conv_input = nn.Conv2d(input_c, N, kernel_size=3, stride=1, padding=1)
+		self.step_0 = Step(N=N)
 		self.down_0 = nn.Conv2d(N, N*2, kernel_size=3, stride=2, padding=1)
-		self.step_1 = Step(in_c=N*2, out_c=N*2, N=N*2)
+		self.step_1 = Step(N=N*2)
 		self.down_1 = nn.Conv2d(N*2, N*4, kernel_size=3, stride=2, padding=1)
-		self.step_2 = Step(in_c=N*4, out_c=N*4, N=N*4)
+		self.step_2 = Step(N=N*4)
 		self.down_2 = nn.Conv2d(N*4, N*8, kernel_size=3, stride=2, padding=1)
-		self.step_3 = Step(in_c=N*8, out_c=N*8, N=N*8)
-		self.step_4 = Step(in_c=N*8, out_c=N*8, N=N*8)
+		self.step_3 = Step(N=N*8)
+		self.step_4 = Step(N=N*8)
 		self.up_0 = nn.ConvTranspose2d(N*16, N*4, kernel_size=4, stride=2, padding=1)
-		self.step_5 = Step(in_c=N*4, out_c=N*4, N=N*4)
+		self.step_5 = Step(N=N*4)
 		self.up_1 = nn.ConvTranspose2d(N*8, N*2, kernel_size=4, stride=2, padding=1)
-		self.step_6 = Step(in_c=N*2, out_c=N*2, N=N*2)
+		self.step_6 = Step(N=N*2)
 		self.up_2 = nn.ConvTranspose2d(N*4, N, kernel_size=4, stride=2, padding=1)
-		self.step_7 = Step(in_c=N, out_c=output_c, N=N)
+		self.step_7 = Step(N=N)
+		self.conv_output = nn.Conv2d(N, output_c, kernel_size=3, stride=1, padding=1)
 
 	def forward(self, x):
-		x_step_0 = self.step_0(x)
+		x_conv_input = F.leaky_relu(self.conv_input(x), 0.2)
+		x_step_0 = self.step_0(x_conv_input)
 		x_down_0 = F.leaky_relu(self.down_0(x_step_0), 0.2)
 		x_step_1 = self.step_1(x_down_0)
 		x_down_1 = F.leaky_relu(self.down_0(x_step_1), 0.2)
@@ -64,7 +67,8 @@ class UNet(nn.Module):
 		x_step_6 = self.step_6(x_up_1)
 		x_up_2 = F.leaky_relu(self.up_2(torch.cat([x_down_0, x_step_6], dim=1)), 0.2)
 		x_step_7 = self.step_7(x_up_2)
-		return x + x_step_7
+		x_conv_output = self.conv_output(x_step_7)
+		return x + x_conv_output
 
 #
 # class Step(nn.Module):
