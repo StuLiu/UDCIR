@@ -54,9 +54,9 @@ class Trainer(object):
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				if (batch_idx + 1) % 20 == 0:
+				if (batch_idx + 1) % 2 == 0:
 					self._eval_and_save(epoch, batch_idx + 1)
-			sys.stdout.write('\n')
+			print('\n')
 			self.scheduler.step(epoch)
 		return self.net
 
@@ -69,10 +69,10 @@ class Trainer(object):
 				output_eval = self.net(data_eval)
 				eval_loss_sum += self.loss_F(output_eval, target_eval).item()
 			eval_loss = eval_loss_sum / len(self.eval_data_loader)
-			sys.stdout.write('\rTrain Epoch: {} [{}/{} ({:.2f}%)]\t\tLoss: {:.8f}'.format(
+			print('\r{}'.format('Train Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.8f}'.format(
 				epoch, batch_idx, len(self.train_data_loader),
 				100. * batch_idx / len(self.train_data_loader),
-				eval_loss))
+				eval_loss)))
 			with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
 				writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'], batch_idx_global)
 				writer.add_scalar('Loss', eval_loss, batch_idx_global)
