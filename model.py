@@ -53,6 +53,12 @@ class UNet(nn.Module):
 		return x + x_step_7
 
 	def _step(self, in_c, out_c, N)->list:
+		"""
+		:param in_c:
+		:param out_c:
+		:param N:
+		:return:
+		"""
 		step_operations = []
 		step_operations.append(nn.Conv2d(in_c, N, kernel_size=3, stride=1, padding=1))
 		step_operations.append(nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1))
@@ -60,6 +66,11 @@ class UNet(nn.Module):
 		return step_operations
 
 	def _forward_step(self, x, step:list)->torch.Tensor:
+		"""
+		:param x:
+		:param step:
+		:return:
+		"""
 		assert len(step) == 3, 'invalid step'
 		x1 = F.leaky_relu(step[0](x), 0.2)
 		x2 = F.leaky_relu(step[1](x1), 0.2) + x
