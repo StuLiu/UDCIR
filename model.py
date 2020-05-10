@@ -66,8 +66,8 @@ class UNet(nn.Module):
 
 	def forward(self, x):
 		F_0 = self.relu_0(self.conv_0(x))
-		F_U = self.U(F_0)
-		F_end = self.conv_end(F_U)
+		# F_U = self.U(F_0)
+		F_end = self.conv_end(F_0)
 		return F_end
 
 
