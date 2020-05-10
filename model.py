@@ -15,25 +15,39 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+class Step(nn.Module):
+
+	def __init__(self, in_c, out_c, N):
+		super(Step, self).__init__()
+		self.conv_0 = nn.Conv2d(in_c, N, kernel_size=3, stride=1, padding=1)
+		self.conv_1 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
+		self.conv_2 = nn.Conv2d(N, out_c, kernel_size=3, stride=1, padding=1)
+
+	def forward(self, x):
+		x1 = F.leaky_relu(self.conv_0(x), 0.2)
+		x2 = F.leaky_relu(self.conv_1(x1), 0.2) + x
+		x3 = F.leaky_relu(self.conv_2(x2), 0.2) + x1
+		return x3
+
 class UNet(nn.Module):
 	""" The UNet module"""
 	def __init__(self, input_c=3, output_c=3, N=64):
 		super(UNet, self).__init__()
 		# def the operations in UNet
-		self.step_0 = self._step(in_c=input_c, out_c=N, N=N)
+		self.step_0 = Step(in_c=input_c, out_c=N, N=N)
 		self.down_0 = nn.Conv2d(N, N*2, kernel_size=3, stride=2, padding=1)
-		self.step_1 = self._step(in_c=N*2, out_c=N*2, N=N*2)
+		self.step_1 = Step(in_c=N*2, out_c=N*2, N=N*2)
 		self.down_1 = nn.Conv2d(N*2, N*4, kernel_size=3, stride=2, padding=1)
-		self.step_2 = self._step(in_c=N*4, out_c=N*4, N=N*4)
+		self.step_2 = Step(in_c=N*4, out_c=N*4, N=N*4)
 		self.down_2 = nn.Conv2d(N*4, N*8, kernel_size=3, stride=2, padding=1)
-		self.step_3 = self._step(in_c=N*8, out_c=N*8, N=N*8)
-		self.step_4 = self._step(in_c=N*8, out_c=N*8, N=N*8)
+		self.step_3 = Step(in_c=N*8, out_c=N*8, N=N*8)
+		self.step_4 = Step(in_c=N*8, out_c=N*8, N=N*8)
 		self.up_0 = nn.ConvTranspose2d(N*16, N*4, kernel_size=4, stride=2, padding=1)
-		self.step_5 = self._step(in_c=N*4, out_c=N*4, N=N*4)
+		self.step_5 = Step(in_c=N*4, out_c=N*4, N=N*4)
 		self.up_1 = nn.ConvTranspose2d(N*8, N*2, kernel_size=4, stride=2, padding=1)
-		self.step_6 = self._step(in_c=N*2, out_c=N*2, N=N*2)
+		self.step_6 = Step(in_c=N*2, out_c=N*2, N=N*2)
 		self.up_2 = nn.ConvTranspose2d(N*4, N, kernel_size=4, stride=2, padding=1)
-		self.step_7 = self._step(in_c=N, out_c=output_c, N=N)
+		self.step_7 = Step(in_c=N, out_c=output_c, N=N)
 
 	def forward(self, x):
 		x_step_0 = self._forward_step(x, self.step_0)
@@ -52,31 +66,21 @@ class UNet(nn.Module):
 		x_step_7 = self._forward_step(x_up_2, self.step_7)
 		return x + x_step_7
 
-	def _step(self, in_c, out_c, N)->list:
-		"""
-		:param in_c:
-		:param out_c:
-		:param N:
-		:return:
-		"""
-		step_operations = []
-		step_operations.append(nn.Conv2d(in_c, N, kernel_size=3, stride=1, padding=1))
-		step_operations.append(nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1))
-		step_operations.append(nn.Conv2d(N, out_c, kernel_size=3, stride=1, padding=1))
-		return step_operations
-
-	def _forward_step(self, x, step:list)->torch.Tensor:
-		"""
-		:param x:
-		:param step:
-		:return:
-		"""
-		assert len(step) == 3, 'invalid step'
-		x1 = F.leaky_relu(step[0](x), 0.2)
-		x2 = F.leaky_relu(step[1](x1), 0.2) + x
-		x3 = F.leaky_relu(step[2](x2), 0.2) + x1
-		return x3
-
+#
+# class Step(nn.Module):
+#
+# 	def __init__(self, in_c, out_c, N):
+# 		super(Step, self).__init__()
+# 		self.conv_0 = nn.Conv2d(in_c, N, kernel_size=3, stride=1, padding=1)
+# 		self.conv_1 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
+# 		self.conv_2 = nn.Conv2d(N, out_c, kernel_size=3, stride=1, padding=1)
+#
+# 	def forward(self, x):
+# 		x1 = F.leaky_relu(self.conv_0(x), 0.2)
+# 		x2 = F.leaky_relu(self.conv_1(x1), 0.2) + x
+# 		x3 = F.leaky_relu(self.conv_2(x2), 0.2) + x1
+# 		return x3
+#
 
 class Generator(nn.Module):
 	""" The nueral network for real-time image restoration. """
