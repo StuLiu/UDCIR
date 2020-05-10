@@ -59,7 +59,7 @@ class UNet(nn.Module):
 		x_down_1 = F.leaky_relu(self.down_1(x_step_1), 0.2)
 		x_step_2 = self.step_2(x_down_1)
 		x_down_2 = F.leaky_relu(self.down_2(x_step_2), 0.2)
-		x_step_3 = self.self.step_3(x_down_2)
+		x_step_3 = self.step_3(x_down_2)
 		x_step_4 = self.step_4(x_step_3)
 		x_up_0 = F.leaky_relu(self.up_0(torch.cat([x_down_2, x_step_4], dim=1)), 0.2)
 		x_step_5 = self.step_5(x_up_0)
