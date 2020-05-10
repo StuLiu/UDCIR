@@ -74,7 +74,7 @@ class UNet(nn.Module):
 		assert len(step) == 3, 'invalid step'
 		x1 = F.leaky_relu(step[0](x), 0.2)
 		x2 = F.leaky_relu(step[1](x1), 0.2) + x
-		x3 = F.leaky_relu(step[1](x2), 0.2) + x1
+		x3 = F.leaky_relu(step[2](x2), 0.2) + x1
 		return x3
 
 
