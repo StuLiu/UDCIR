@@ -50,20 +50,20 @@ class UNet(nn.Module):
 		self.step_7 = Step(in_c=N, out_c=output_c, N=N)
 
 	def forward(self, x):
-		x_step_0 = self._forward_step(x, self.step_0)
+		x_step_0 = self.step_0(x)
 		x_down_0 = F.leaky_relu(self.down_0(x_step_0), 0.2)
-		x_step_1 = self._forward_step(x_down_0, self.step_1)
+		x_step_1 = self.step_1(x_down_0)
 		x_down_1 = F.leaky_relu(self.down_0(x_step_1), 0.2)
-		x_step_2 = self._forward_step(x_down_1, self.step_2)
+		x_step_2 = self.step_2(x_down_1)
 		x_down_2 = F.leaky_relu(self.down_0(x_step_2), 0.2)
-		x_step_3 = self._forward_step(x_down_2, self.step_3)
-		x_step_4 = self._forward_step(x_step_3, self.step_4)
+		x_step_3 = self.self.step_3(x_down_2)
+		x_step_4 = self.step_4(x_step_3)
 		x_up_0 = F.leaky_relu(self.up_0(torch.cat([x_down_2, x_step_4], dim=1)), 0.2)
-		x_step_5 = self._forward_step(x_up_0, self.step_5)
+		x_step_5 = self.step_5(x_up_0)
 		x_up_1 = F.leaky_relu(self.up_1(torch.cat([x_down_1, x_step_5], dim=1)), 0.2)
-		x_step_6 = self._forward_step(x_up_1, self.step_6)
+		x_step_6 = self.step_6(x_up_1)
 		x_up_2 = F.leaky_relu(self.up_2(torch.cat([x_down_0, x_step_6], dim=1)), 0.2)
-		x_step_7 = self._forward_step(x_up_2, self.step_7)
+		x_step_7 = self.step_7(x_up_2)
 		return x + x_step_7
 
 #
