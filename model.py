@@ -94,9 +94,10 @@ class UNet(nn.Module):
 
 	def forward(self, x):
 		F_0 = self.relu_0(self.conv_0(x))
-		# F_U = self.U(F_0)
-		F_end = self.conv_end(F_0)
+		F_U = self.U(F_0)
+		F_end = self.conv_end(F_U)
 		return F_end
+
 
 
 class Generator(nn.Module):
