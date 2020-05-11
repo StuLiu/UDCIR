@@ -25,7 +25,7 @@ class PairedData(Dataset):
 			self.Y = np.load(os.path.join(datadir, 'HQ_256.npy'))
 			assert self.X.shape == self.Y.shape, 'data unpaired'
 			self.datasize = len(self.X)
-		print('Loaded {} paired data from {}.'.format(self.datasize, datadir))
+			print('Loaded {} paired data from {}.'.format(self.datasize, datadir))
 
 	def set_data(self, x:np.ndarray, y:np.ndarray):
 		assert x.shape == y.shape, 'data unpaired'
