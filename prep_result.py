@@ -21,7 +21,7 @@ def restoration(udc):
     data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float().to(DEVICE)
     model = UNet().to(DEVICE)
     model.load_state_dict(torch.load(
-        f='pkls/UNet/model_8080.pkl',
+        f='pkls/UNet/model_8960.pkl',
         map_location=DEVICE))
     with torch.no_grad():
         output_batch = model(data_batch).cpu().numpy()
