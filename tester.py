@@ -35,7 +35,7 @@ class Tester(object):
 				data, target = data.to(self.device), target.to(self.device)
 				output = self.net(data)
 				for i, F in enumerate(self.index_F_list):
-					test_indexes[i] += F(output, target)
+					test_indexes[i] += F(output.cpu().numpy(), target.cpu().numpy())
 			results = [ele / len(self.dataloader.dataset) for ele in test_indexes]
 			sys.stdout.write('\rTest indexes:{}\n'.format(results))
 		return results

@@ -18,11 +18,18 @@ from torch.utils.data import DataLoader
 
 class PairedData(Dataset):
 	def __init__(self, datadir='data/Train/Toled'):
-		self.X = np.load(os.path.join(datadir, 'LQ_256.npy'))
-		self.Y = np.load(os.path.join(datadir, 'HQ_256.npy'))
-		assert self.X.shape == self.Y.shape, 'data unpaired'
-		self.datasize = len(self.X)
-		print('Loaded {} paired data from {}.'.format(self.datasize, datadir))
+		if datadir == None:
+			self.X, self.Y = None, None
+		else:
+			self.X = np.load(os.path.join(datadir, 'LQ_256.npy'))
+			self.Y = np.load(os.path.join(datadir, 'HQ_256.npy'))
+			assert self.X.shape == self.Y.shape, 'data unpaired'
+			self.datasize = len(self.X)
+			print('Loaded {} paired data from {}.'.format(self.datasize, datadir))
+
+	def set_data(self, x:np.ndarray, y:np.ndarray):
+		assert x.shape == y.shape, 'data unpaired'
+		self.X, self.Y = x, y
 
 	def __len__(self):
 		return self.datasize
