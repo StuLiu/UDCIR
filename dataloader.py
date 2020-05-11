@@ -20,8 +20,10 @@ from preprocess import read_imgs_from_dir
 class PairedData(Dataset):
 	def __init__(self, datadir='data/Train/Toled', npy=True):
 		if npy:
-			self.X = np.load(os.path.join(datadir, 'LQ_256.npy'))
-			self.Y = np.load(os.path.join(datadir, 'HQ_256.npy'))
+			x = np.load(os.path.join(datadir, 'LQ_256.npy'))
+			y = np.load(os.path.join(datadir, 'HQ_256.npy'))
+			self.X = np.transpose(x, (0, 3, 1, 2))
+			self.Y = np.transpose(y, (0, 3, 1, 2))
 		else:
 			self.X = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
 			self.Y = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
