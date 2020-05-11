@@ -24,10 +24,10 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 if __name__ == '__main__':
 	# load train data
 	test_datasets= PairedData(datadir=None).set_data(
-		read_imgs_from_dir('data/Train/Toled/LQ', enhance=False)[:30],
-		read_imgs_from_dir('data/Train/Toled/HQ', enhance=False)[:30],
+		read_imgs_from_dir('data/Train/Toled/LQ', enhance=False)[:32],
+		read_imgs_from_dir('data/Train/Toled/HQ', enhance=False)[:32],
 	)
-	test_loader = DataLoader(test_datasets, batch_size=1, shuffle=False)
+	test_loader = DataLoader(test_datasets, batch_size=16, shuffle=False)
 	# create model for Image-Restoration
 	model = UNet().to(DEVICE)
 	model.load_state_dict(torch.load(
