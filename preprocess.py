@@ -83,8 +83,8 @@ if __name__ == '__main__':
 	# print(read_imgs_from_mat('toled_val_display.mat').shape)
 	# cv2.imshow('LQ', read_imgs_from_mat('toled_val_display.mat')[22])
 	# cv2.waitKey(0)
-	_imgs2npy(img_dir_path='data/Train/Toled/HQ', enhance=True, out_path='data/Train/Toled/HQ.npy')
-	_imgs2npy(img_dir_path='data/Train/Toled/LQ', enhance=True, out_path='data/Train/Toled/LQ.npy')
+	_imgs2npy(img_dir_path='data/Train/Toled/HQ', enhance=True, out_path='data/Train/Toled/HQ_256.npy')
+	_imgs2npy(img_dir_path='data/Train/Toled/LQ', enhance=True, out_path='data/Train/Toled/LQ_256.npy')
 
 
 

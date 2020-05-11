@@ -21,7 +21,7 @@ def restoration(udc):
     data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float().to(DEVICE)
     model = UNet().to(DEVICE)
     model.load_state_dict(torch.load(
-        f='pkls/UNet/model_8960.pkl',
+        f='pkls/UNet/model_21240.pkl',
         map_location=DEVICE))
     with torch.no_grad():
         output_batch = model(data_batch).cpu().numpy()
@@ -59,7 +59,7 @@ res_fn = os.path.join(work_dir, res_dir, 'results.mat')
 res_key = 'results'  # Note: do not change this key, the evaluation code will look for this key
 savemat(res_fn, {res_key: results})
 
-# submission indormation
+# submission information
 # TODO: update the values below; the evaluation code will parse them
 runtime = 0.0  # seconds / megapixel
 cpu_or_gpu = 0  # 0: GPU, 1: CPU
