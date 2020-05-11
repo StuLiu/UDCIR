@@ -39,8 +39,10 @@ def keep_newest(dir_path, k=500):
 	lists = os.listdir(dir_path)
 	if len(lists) > k:
 		lists.sort(key=lambda fn: os.path.getmtime(os.path.join(dir_path, fn)))
-		for i in range(k - len(lists)):
+		# print(lists)
+		for i in range(len(lists)-k):
 			oldest_file = os.path.join(dir_path, lists[i])
+			# print(oldest_file)
 			os.remove(oldest_file)
 
 if __name__ == '__main__':
