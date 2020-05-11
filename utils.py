@@ -37,4 +37,7 @@ def show_mat(mat_file_path='./res_dir/results.mat', key='results'):
 
 if __name__ == '__main__':
 	# show_mat(mat_file_path='./toled_val_display.mat', key='val_display')
-	show_mat(mat_file_path='./res_dir/results.mat', key='results')
+	# show_mat(mat_file_path='./res_dir/results.mat', key='results')
+	# show_mat(mat_file_path='./results_dir/results.mat', key='results')
+	print(compute_PSNR(loadmat('./toled_val_display.mat')['results'],
+	                   loadmat('./res_dir/results.mat')['results']))
