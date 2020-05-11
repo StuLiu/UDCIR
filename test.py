@@ -17,16 +17,13 @@ from model import Generator, UNet
 from tester import Tester
 from utils import compute_PSNR
 import torch
-from preprocess import read_imgs_from_dir
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if __name__ == '__main__':
 	# load train data
-	test_datasets= PairedData(datadir=None).set_data(
-		read_imgs_from_dir('data/Train/Toled/LQ', enhance=False)[:32],
-		read_imgs_from_dir('data/Train/Toled/HQ', enhance=False)[:32],
-	)
+	test_datasets= PairedData(datadir='data/Train/Toled', npy=False)
+	print(len(test_datasets))
 	test_loader = DataLoader(test_datasets, batch_size=16, shuffle=False)
 	# create model for Image-Restoration
 	model = UNet().to(DEVICE)
