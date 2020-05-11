@@ -41,7 +41,7 @@ class Trainer(object):
 		self.pkls_path = pkls_path
 		if not os.path.exists(self.pkls_path):
 			os.makedirs(self.pkls_path)
-		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=2, gamma=0.9)
+		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=5, gamma=0.9)
 
 	def train(self):
 		print('Do training...')
