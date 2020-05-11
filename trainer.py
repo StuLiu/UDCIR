@@ -55,7 +55,7 @@ class Trainer(object):
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				if (batch_idx + 1) % 1 == 0 or batch_idx == 0:
+				if (batch_idx + 1) % 60 == 0 or batch_idx == 0:
 					self._eval_and_save(epoch, batch_idx + 1)
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
@@ -83,5 +83,5 @@ class Trainer(object):
 				)
 			torch.save(self.net.state_dict(), os.path.join(self.pkls_path,
 			                                               'model_{}.pkl'.format(batch_idx_global)))
-			keep_newest(dir_path=self.pkls_path, k=5)
+			keep_newest(dir_path=self.pkls_path, k=500)
 			sys.stdout.flush()
