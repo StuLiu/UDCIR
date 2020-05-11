@@ -15,7 +15,7 @@ import torch
 import torch.nn.functional as F
 import torch.optim.lr_scheduler as lr_scheduler
 from torch.utils.tensorboard import SummaryWriter
-from utils import compute_PSNR
+from utils import compute_PSNR, keep_newest
 
 class Trainer(object):
 	""" The class to train networks"""
@@ -45,6 +45,7 @@ class Trainer(object):
 
 	def train(self):
 		print('Do training...')
+		sys.stdout.flush()
 		self.net.train()
 		for epoch in range(1, self.epoch + 1):
 			for batch_idx, (data, target) in enumerate(self.train_data_loader):
@@ -54,7 +55,7 @@ class Trainer(object):
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				if (batch_idx + 1) % 20 == 0 or batch_idx == 0:
+				if (batch_idx + 1) % 60 == 0 or batch_idx == 0:
 					self._eval_and_save(epoch, batch_idx + 1)
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
@@ -82,4 +83,5 @@ class Trainer(object):
 				)
 			torch.save(self.net.state_dict(), os.path.join(self.pkls_path,
 			                                               'model_{}.pkl'.format(batch_idx_global)))
-
+			keep_newest(dir_path=self.pkls_path, k=500)
+			sys.stdout.flush()
