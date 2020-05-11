@@ -39,8 +39,9 @@ def keep_newest(dir_path, k=500):
 	lists = os.listdir(dir_path)
 	if len(lists) > k:
 		lists.sort(key=lambda fn: os.path.getmtime(os.path.join(dir_path, fn)))
-		oldest_file = os.path.join(dir_path, lists[0])
-		os.remove(oldest_file)
+		for i in range(k - len(lists)):
+			oldest_file = os.path.join(dir_path, lists[i])
+			os.remove(oldest_file)
 
 if __name__ == '__main__':
 	show_mat(mat_file_path='./toled_val_display.mat', key='val_display')
