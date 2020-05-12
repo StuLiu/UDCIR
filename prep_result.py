@@ -58,7 +58,7 @@ model.load_state_dict(torch.load(f=pkl_path, map_location=DEVICE))
 udc_fn = 'toled_val_display.mat'  # or poled_val_display.mat
 udc_key = 'val_display'
 udc_mat = loadmat(os.path.join(work_dir, udc_fn))[udc_key]
-print(type(udc_mat), udc_mat[0,0:5,0:5,:])
+# print(type(udc_mat), udc_mat[0,0:5,0:5,:])
 
 # restoration
 n_im, h, w, c = udc_mat.shape
@@ -67,8 +67,8 @@ for i in range(n_im):
     udc = np.reshape(udc_mat[i, :, :, :], (h, w, c))
     restored = restoration(udc, model)
     results[i, :, :, :] = restored
-print(type(results), results[0,0:5,0:5,:])
-exit(0)
+# print(type(results), results[0,0:5,0:5,:])
+# exit(0)
 
 # create results directory
 res_dir = 'res_dir'
