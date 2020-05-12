@@ -19,10 +19,10 @@ from utils import compute_PSNR
 import torch, sys
 
 model_name = sys.argv[1]
-pkl_dir = sys.argv[2]
+pkl_path = sys.argv[2]
 dev = sys.argv[3]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
-print(model_name, pkl_dir, DEVICE)
+print(model_name, pkl_path, DEVICE)
 
 if model_name == 'UNet-16':
 	model = UNet(N=16)
@@ -44,9 +44,7 @@ if __name__ == '__main__':
 	print(len(test_datasets))
 	test_loader = DataLoader(test_datasets, batch_size=1, shuffle=False)
 	# create model for Image-Restoration
-	model.load_state_dict(torch.load(
-		f=pkl_dir,
-		map_location=DEVICE))
+	model.load_state_dict(torch.load(f=pkl_path, map_location=DEVICE))
 	tester = Tester(dataloader=test_loader,
 	                network=model,
 	                functions=[compute_PSNR],
