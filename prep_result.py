@@ -8,50 +8,47 @@ import torch
 from scipy.io.matlab.mio import savemat, loadmat
 from model import Generator, UNet
 from torch import from_numpy
-import sys, cv2
-from preprocess import image_crop, image_splice
+import sys
+# import cv2
+# from preprocess import image_crop, image_splice
 
 print('begin')
 model_path = sys.argv[1]
 dev = sys.argv[2]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
 print(model_path, DEVICE)
-# exit(0)
-
-# def restoration(udc, model):
-#     # TODO: plug in your method here
-#     print('udc.shape', udc.shape)
-#     # cv2.imshow('img', udc)
-#     # cv2.waitKey(0)
-#     data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float().to(DEVICE)
-#     with torch.no_grad():
-#         output_batch = model(data_batch).cpu().numpy()
-#         output_batch = np.where(output_batch < 0, 0, output_batch)
-#         output_batch = np.where(output_batch > 255, 255, output_batch)
-#     result = output_batch.transpose((0, 2, 3, 1))[0,:,:,:]
-#     print('result.shape', result.shape)
-#     # cv2.imshow('img', result)
-#     # cv2.waitKey(0)
-#     return result
 
 def restoration(udc, model):
     # TODO: plug in your method here
-    print('udc.shape', udc.shape)   # (h, w, c)
-    cropped_imgs = np.array(image_crop(udc))
-    # for i in cropped_imgs:
-    #     cv2.imshow('img', i)
-    #     cv2.waitKey(0)
-    data_batch = from_numpy(cropped_imgs.transpose((0, 3, 1, 2))).float().to(DEVICE)
+    print('udc.shape', udc.shape)
+    # cv2.imshow('img', udc)
+    # cv2.waitKey(0)
+    data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float().to(DEVICE)
     with torch.no_grad():
         output_batch = model(data_batch).cpu().numpy()
         output_batch = np.where(output_batch < 0, 0, output_batch)
         output_batch = np.where(output_batch > 255, 255, output_batch)
-    enhanced_imgs = output_batch.transpose((0, 2, 3, 1))
-    enhanced_img = image_splice(enhanced_imgs)
-    print('result.shape', enhanced_img.shape)
-    # cv2.imshow('img', enhanced_img)
+    result = output_batch.transpose((0, 2, 3, 1))[0,:,:,:]
+    print('result.shape', result.shape)
+    # cv2.imshow('img', result)
     # cv2.waitKey(0)
-    return enhanced_img
+    return result
+#
+# def restoration(udc, model):
+#     # TODO: plug in your method here
+#     print('udc.shape', udc.shape)   # (h, w, c)
+#     cropped_imgs = np.array(image_crop(udc))
+#     data_batch = from_numpy(cropped_imgs.transpose((0, 3, 1, 2))).float().to(DEVICE)
+#     with torch.no_grad():
+#         output_batch = model(data_batch).cpu().numpy()
+#         output_batch = np.where(output_batch < 0, 0, output_batch)
+#         output_batch = np.where(output_batch > 255, 255, output_batch)
+#     enhanced_imgs = output_batch.transpose((0, 2, 3, 1))
+#     enhanced_img = image_splice(enhanced_imgs)
+#     print('result.shape', enhanced_img.shape)
+#     # cv2.imshow('img', enhanced_img)
+#     # cv2.waitKey(0)
+#     return enhanced_img
 
 # TODO: update your working directory; it should contain the .mat file containing noisy images
 work_dir = './'
