@@ -63,10 +63,10 @@ def _image_enhance(img, only_crop=False)->list:
 	for img_ in imgs_cropped:
 		if not only_crop:
 			# img_flipped_y = cv2.flip(img_, 1)         # flip the image around y-axis
-			# img_flipped_x = cv2.flip(img_, 0)         # flip the image around x-axis
+			img_flipped_x = cv2.flip(img_, 0)         # flip the image around x-axis
 			img_flipped_xy = cv2.flip(img_, -1)         # flip the image around x-axis
-			img_transposed = cv2.transpose(img)         # transpose the image
-			results.extend([img_, img_flipped_xy, img_transposed])
+			# img_transposed = cv2.transpose(img)         # transpose the image
+			results.extend([img_, img_flipped_xy, img_flipped_x])
 		else:
 			results.append(img_)
 	# print(np.array(results).shape)
