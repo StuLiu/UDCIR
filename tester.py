@@ -36,6 +36,7 @@ class Tester(object):
 				output = self.net(data)
 				for i, F in enumerate(self.index_F_list):
 					test_indexes[i] += F(output.cpu().numpy(), target.cpu().numpy())
-				results = [ele / len(self.dataloader.dataset) for ele in test_indexes]
-				sys.stdout.write('\rTest indexes:{}\n'.format(results))
+				results = [ele / (batch_idx + 1) for ele in test_indexes]
+				sys.stdout.write('\rBatch index:{},\tTest indexes:{}\n'.
+				                 format(((batch_idx + 1)),results))
 		return results
