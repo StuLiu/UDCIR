@@ -13,7 +13,7 @@
 
 from torch.utils.data import DataLoader
 from dataloader import PairedData
-from model import Generator, UNet
+from model import UNet
 from tester import Tester
 from utils import compute_PSNR
 import torch, sys

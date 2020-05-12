@@ -86,10 +86,10 @@ class UNet(nn.Module):
 # 		return x3
 #
 
-class Generator(nn.Module):
+class CNN(nn.Module):
 	""" The nueral network for real-time image restoration. """
 	def __init__(self, image_c=3, N=64):
-		super(Generator, self).__init__()
+		super(CNN, self).__init__()
 		# def the operations in network
 		self.conv_0 = nn.Conv2d(image_c, N, (3, 3), stride=1, padding=1)
 		self.relu_0 = nn.LeakyReLU(0.2)

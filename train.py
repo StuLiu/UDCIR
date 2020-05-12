@@ -13,22 +13,42 @@
 
 from torch.utils.data import DataLoader
 from dataloader import PairedData
-from model import Generator, UNet
+from model import UNet, CNN
 from trainer import Trainer
 import torch.nn.functional as F
+import sys, torch, os.path
+
+model_name = sys.argv[1]
+pkls_dir = sys.argv[2]
+dev = sys.argv[3]
+DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
+print(model_name, pkls_dir, DEVICE)
+
+if model_name == 'UNet-16':
+	model = UNet(N=16)
+elif model_name == 'UNet-32':
+	model = UNet(N=32)
+elif model_name == 'UNet-64':
+	model = UNet(N=64)
+elif model_name == 'CNN':
+	model = CNN(N=32)
+else:
+	model = None
+	print('>>> Model name:{} invalid!')
+	exit(-1)
+# run "python train.py UNet-16"
 
 if __name__ == '__main__':
 	# load train data
-	train_datasets= PairedData(datadir='data/Train/Toled')
-	eval_datasets= PairedData(datadir='data/Eval/Toled')
+	train_datasets= PairedData(datadir='data/Train/Toled', npy=True)
+	eval_datasets= PairedData(datadir='data/Eval/Toled', npy=False)
 	train_loader = DataLoader(train_datasets, batch_size=32, shuffle=True)
-	eval_loader = DataLoader(eval_datasets, batch_size=32, shuffle=False)
+	eval_loader = DataLoader(eval_datasets, batch_size=1, shuffle=False)
 	# create model for Image-Restoration
-	model = UNet(input_c=3, output_c=3, N=32)
 	trainer = Trainer(train_data_loader=train_loader,
 	                  eval_data_loader=eval_loader,
 	                  network=model,
 	                  loss_function=F.l1_loss,
 	                  epoch=400,
-	                  pkls_path='./pkls/UNet/')
+	                  pkls_path=os.path.join(pkls_dir, model_name))
 	model = trainer.train()
