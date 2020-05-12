@@ -16,19 +16,22 @@ from dataloader import PairedData
 from model import Generator, UNet
 from tester import Tester
 from utils import compute_PSNR
-import torch
+import torch, sys
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model_path = sys.argv[1]
+dev = sys.argv[2]
+DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
+print(model_path, DEVICE)
 
 if __name__ == '__main__':
 	# load train data
-	test_datasets= PairedData(datadir='data/Train/Toled', npy=False)
+	test_datasets= PairedData(datadir='data/Eval/Toled', npy=True)
 	print(len(test_datasets))
 	test_loader = DataLoader(test_datasets, batch_size=1, shuffle=False)
 	# create model for Image-Restoration
-	model = UNet().to(DEVICE)
+	model = UNet(N=32).to(DEVICE)
 	model.load_state_dict(torch.load(
-		f='pkls/UNet/model_45060.pkl',
+		f='pkls/UNet/model_28760.pkl',
 		map_location=DEVICE))
 	tester = Tester(dataloader=test_loader, network=model, functions=[compute_PSNR])
 	tester.test()
