@@ -83,5 +83,5 @@ class Trainer(object):
 				)
 			torch.save(self.net.state_dict(), os.path.join(self.pkls_path,
 			                                               'model_{}.pkl'.format(batch_idx_global)))
-			keep_newest(dir_path=self.pkls_path, k=500)
+			keep_newest(dir_path=self.pkls_path, k=800)
 			sys.stdout.flush()
