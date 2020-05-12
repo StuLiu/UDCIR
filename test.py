@@ -28,7 +28,7 @@ if __name__ == '__main__':
 	# create model for Image-Restoration
 	model = UNet().to(DEVICE)
 	model.load_state_dict(torch.load(
-		f='pkls/UNet/model_8960.pkl',
+		f='pkls/UNet/model_45060.pkl',
 		map_location=DEVICE))
 	tester = Tester(dataloader=test_loader, network=model, functions=[compute_PSNR])
 	tester.test()
