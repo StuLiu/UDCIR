@@ -37,7 +37,7 @@ def restoration(udc, model):
 work_dir = './'
 
 # load model
-model = UNet().to(DEVICE)
+model = UNet(N=32).to(DEVICE)
 model.load_state_dict(torch.load(
     f=os.path.join(work_dir, model_path),
     map_location=DEVICE)
