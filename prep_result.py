@@ -6,7 +6,7 @@ import os.path
 import shutil
 import torch
 from scipy.io.matlab.mio import savemat, loadmat
-from model import Generator, UNet
+from model import UNet
 from torch import from_numpy
 import sys
 # import cv2
@@ -64,7 +64,7 @@ model.load_state_dict(torch.load(
 udc_fn = 'toled_val_display.mat'  # or poled_val_display.mat
 udc_key = 'val_display'
 udc_mat = loadmat(os.path.join(work_dir, udc_fn))[udc_key]
-
+print(type(udc_mat), udc_mat[0,0:5,0:5,:])
 # restoration
 n_im, h, w, c = udc_mat.shape
 results = udc_mat.copy()
@@ -72,7 +72,8 @@ for i in range(n_im):
     udc = np.reshape(udc_mat[i, :, :, :], (h, w, c))
     restored = restoration(udc, model)
     results[i, :, :, :] = restored
-
+print(type(results), results[0,0:5,0:5,:])
+exit(0)
 # create results directory
 res_dir = 'res_dir'
 os.makedirs(os.path.join(work_dir, res_dir), exist_ok=True)
