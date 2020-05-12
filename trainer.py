@@ -25,9 +25,10 @@ class Trainer(object):
 	             network,
 	             optimizer=torch.optim.Adam,
 	             learning_rate=1.0e-4,
-	             epoch=1000,
+	             epoch=400,
 	             loss_function=F.mse_loss,
-	             pkls_path='./pkls/'):
+	             pkls_dir='./pkls/',
+	             summary_dir='./summarylogs/',):
 		self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 		print('device:', self.device)
 		self.train_data_loader = train_data_loader
@@ -38,9 +39,12 @@ class Trainer(object):
 		self.opt = optimizer(self.net.parameters(), lr=self.lr)
 		self.epoch = epoch
 		self.loss_F = loss_function
-		self.pkls_path = pkls_path
-		if not os.path.exists(self.pkls_path):
-			os.makedirs(self.pkls_path)
+		self.pkls_dir = pkls_dir
+		self.summary_dir = summary_dir
+		if not os.path.exists(self.pkls_dir):
+			os.makedirs(self.pkls_dir)
+		if not os.path.exists(self.summary_dir):
+			os.makedirs(self.summary_dir)
 		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=5, gamma=0.9)
 
 	def train(self):
@@ -74,14 +78,14 @@ class Trainer(object):
 				.format( epoch, batch_idx, len(self.train_data_loader),
 			             100. * batch_idx / len(self.train_data_loader),
 			             eval_loss)))
-			with SummaryWriter(log_dir='./summarylogs', comment='train') as writer:
+			with SummaryWriter(log_dir=self.summary_dir, comment='train') as writer:
 				writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'], batch_idx_global)
 				writer.add_scalar('Loss', eval_loss, batch_idx_global)
 				writer.add_scalar(
 					'PSNR', compute_PSNR(target_eval.cpu().numpy(), output_eval.cpu().numpy()),
 					batch_idx_global
 				)
-			torch.save(self.net.state_dict(), os.path.join(self.pkls_path,
+			torch.save(self.net.state_dict(), os.path.join(self.pkls_dir,
 			                                               'model_{}.pkl'.format(batch_idx_global)))
-			keep_newest(dir_path=self.pkls_path, k=800)
+			keep_newest(dir_path=self.pkls_dir, k=500)
 			sys.stdout.flush()

@@ -50,5 +50,6 @@ if __name__ == '__main__':
 	                  network=model,
 	                  loss_function=F.l1_loss,
 	                  epoch=400,
-	                  pkls_path=os.path.join(pkls_dir, model_name))
+	                  pkls_dir=os.path.join(pkls_dir, model_name),
+	                  summary_dir='./summarylogs/{}'.format(model_name))
 	model = trainer.train()
