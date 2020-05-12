@@ -68,12 +68,14 @@ class Trainer(object):
 	def _eval_and_save(self, epoch, batch_idx):
 		batch_idx_global = batch_idx + (epoch - 1) * len(self.train_data_loader)
 		with torch.no_grad():
-			eval_loss_sum = 0
+			eval_loss_sum, eval_psnr_sum = 0, 0
 			for batch_idx_eval, (data_eval, target_eval) in enumerate(self.eval_data_loader):
 				data_eval, target_eval = data_eval.to(self.device), target_eval.to(self.device)
 				output_eval = self.net(data_eval)
 				eval_loss_sum += self.loss_F(output_eval, target_eval).item()
+				eval_psnr_sum += compute_PSNR(output_eval.cpu().numpy(), target_eval.cpu().numpy())
 			eval_loss = eval_loss_sum / len(self.eval_data_loader)
+			eval_psnr = eval_psnr_sum / len(self.eval_data_loader)
 			sys.stdout.write('\r{}'.format('Train Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.8f}'
 				.format( epoch, batch_idx, len(self.train_data_loader),
 			             100. * batch_idx / len(self.train_data_loader),
@@ -81,10 +83,7 @@ class Trainer(object):
 			with SummaryWriter(log_dir=self.summary_dir, comment='train') as writer:
 				writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'], batch_idx_global)
 				writer.add_scalar('Loss', eval_loss, batch_idx_global)
-				writer.add_scalar(
-					'PSNR', compute_PSNR(target_eval.cpu().numpy(), output_eval.cpu().numpy()),
-					batch_idx_global
-				)
+				writer.add_scalar('PSNR', eval_psnr, batch_idx_global)
 			torch.save(self.net.state_dict(), os.path.join(self.pkls_dir,
 			                                               'model_{}.pkl'.format(batch_idx_global)))
 			keep_newest(dir_path=self.pkls_dir, k=500)
