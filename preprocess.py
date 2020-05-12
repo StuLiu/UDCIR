@@ -45,6 +45,8 @@ def _image_crop(img)->list:
 	for i in range(4):
 		for j in range(8):
 			results.append(img[i*Width:(i+1)*Width, j*Width:(j+1)*Width, :])
+	# cv2.imshow('w', results[0])
+	# cv2.waitKey(0)
 	return results
 
 def _image_rotate(img)->list:
@@ -59,11 +61,12 @@ def _image_enhance(img)->list:
 	# return imgs_cropped
 	results = []
 	for img_ in imgs_cropped:
-		# img_flipped_y = cv2.flip(img_, 1)       # flip the image around y-axis
-		# img_flipped_x = cv2.flip(img_, 0)       # flip the image around x-axis
-		img_flipped_xy = cv2.flip(img_, -1)  # flip the image around x-axis
-		results.extend([img_, img_flipped_xy])
-		# results.extend([img_, img_flipped_y, img_flipped_x, img_flipped_xy])
+		img_flipped_y = cv2.flip(img_, 1)         # flip the image around y-axis
+		img_flipped_x = cv2.flip(img_, 0)         # flip the image around x-axis
+		# img_flipped_xy = cv2.flip(img_, -1)         # flip the image around x-axis
+		img_rotate_90 = cv2.flip(cv2.transpose(img), 1)
+		img_rotate_270 = cv2.flip(cv2.transpose(img), 0)
+		results.extend([img_, img_flipped_y, img_flipped_x, img_rotate_90, img_rotate_270])
 	# print(np.array(results).shape)
 	return results
 
@@ -85,6 +88,8 @@ if __name__ == '__main__':
 	# cv2.waitKey(0)
 	_imgs2npy(img_dir_path='data/Train/Toled/HQ', enhance=True, out_path='data/Train/Toled/HQ_256.npy')
 	_imgs2npy(img_dir_path='data/Train/Toled/LQ', enhance=True, out_path='data/Train/Toled/LQ_256.npy')
+	_imgs2npy(img_dir_path='data/Eval/Toled/HQ', enhance=True, out_path='data/Eval/Toled/HQ_256.npy')
+	_imgs2npy(img_dir_path='data/Eval/Toled/LQ', enhance=True, out_path='data/Eval/Toled/LQ_256.npy')
 
 
 
