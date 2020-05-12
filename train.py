@@ -21,10 +21,10 @@ if __name__ == '__main__':
 	# load train data
 	train_datasets= PairedData(datadir='data/Train/Toled')
 	eval_datasets= PairedData(datadir='data/Eval/Toled')
-	train_loader = DataLoader(train_datasets, batch_size=16, shuffle=True)
-	eval_loader = DataLoader(eval_datasets, batch_size=16, shuffle=False)
+	train_loader = DataLoader(train_datasets, batch_size=32, shuffle=True)
+	eval_loader = DataLoader(eval_datasets, batch_size=32, shuffle=False)
 	# create model for Image-Restoration
-	model = UNet()
+	model = UNet(input_c=3, output_c=3, N=32)
 	trainer = Trainer(train_data_loader=train_loader,
 	                  eval_data_loader=eval_loader,
 	                  network=model,
