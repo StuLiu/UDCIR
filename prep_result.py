@@ -51,6 +51,7 @@ def restoration(udc, model):
 work_dir = './'
 
 # load model
+model = model.to(DEVICE)
 model.load_state_dict(torch.load(f=pkl_path, map_location=DEVICE))
 
 # load noisy images
