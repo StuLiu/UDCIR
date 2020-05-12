@@ -38,7 +38,11 @@ def read_imgs_from_mat(mat_file_path='data/Train/Toled/HQ')->np.ndarray:
 	imgs_data = data_dict['val_display']
 	return np.array(imgs_data)
 
-def _image_crop(img)->list:
+def image_crop(img)->list:
+	""" crop image with size 1024*2048
+	:param img:  img.shape: (h, w, c)
+	:return:  results list: (N, h, w, c)
+	"""
 	assert img.shape[0]==1024 and img.shape[1]==2048, 'The img is not a UDC photo'
 	Width = 256
 	results = []
@@ -47,7 +51,19 @@ def _image_crop(img)->list:
 			results.append(img[i*Width:(i+1)*Width, j*Width:(j+1)*Width, :])
 	# cv2.imshow('w', results[0])
 	# cv2.waitKey(0)
-	return results
+	return results          # (N, h, w, c)
+
+def image_splice(imgs:np.ndarray)->np.ndarray:
+	""" splice images into a complete image with size of 1024*2048
+	:param img: img.shape: (h, w, c)
+	:return:  results list: (N, h, w, c)
+	"""
+	Width = 256
+	assert imgs.shape==(32, Width, Width, 3), 'The imgs are invalid.'
+	spliced_row_list = []
+	for i in range(4):
+		spliced_row_list.append(np.concatenate([img for img in imgs[i * 8: (i + 1) * 8]], axis=1))
+	return np.concatenate(spliced_row_list, axis=0)          # (h, w, c)
 
 def _image_rotate(img)->list:
 	"""ratate the img with 90°, 180°, and 270°, separately"""
@@ -57,7 +73,7 @@ def _image_rotate(img)->list:
 	return [img, img_cw_90, img_cw_180, img_cw_270]
 
 def _image_enhance(img, only_crop=False)->list:
-	imgs_cropped = _image_crop(img)
+	imgs_cropped = image_crop(img)
 	# return imgs_cropped
 	results = []
 	for img_ in imgs_cropped:
