@@ -14,9 +14,9 @@ print('begin')
 model_path = sys.argv[1]
 dev = sys.argv[2]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
+print(model_path, DEVICE)
+# exit(0)
 
-print(model_path, dev, DEVICE)
-exit(0)
 def restoration(udc, model):
     # TODO: plug in your method here
     print('udc.shape', udc.shape)
