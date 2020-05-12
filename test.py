@@ -25,7 +25,7 @@ print(model_path, DEVICE)
 
 if __name__ == '__main__':
 	# load train data
-	test_datasets= PairedData(datadir='data/Eval/Toled', npy=True)
+	test_datasets= PairedData(datadir='data/Eval/Toled', npy=False)
 	print(len(test_datasets))
 	test_loader = DataLoader(test_datasets, batch_size=1, shuffle=False)
 	# create model for Image-Restoration
