@@ -76,10 +76,10 @@ class Trainer(object):
 				eval_psnr_sum += compute_PSNR(output_eval.cpu().numpy(), target_eval.cpu().numpy())
 			eval_loss = eval_loss_sum / len(self.eval_data_loader)
 			eval_psnr = eval_psnr_sum / len(self.eval_data_loader)
-			sys.stdout.write('\r{}'.format('Train Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.8f}'
+			sys.stdout.write('\r{}'.format('Train Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.4f}\tPSNR:{:.2f}'
 				.format( epoch, batch_idx, len(self.train_data_loader),
 			             100. * batch_idx / len(self.train_data_loader),
-			             eval_loss)))
+			             eval_loss, eval_psnr)))
 			with SummaryWriter(log_dir=self.summary_dir, comment='train') as writer:
 				writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'], batch_idx_global)
 				writer.add_scalar('Loss', eval_loss, batch_idx_global)
