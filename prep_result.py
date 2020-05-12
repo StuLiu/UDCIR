@@ -8,21 +8,21 @@ import torch
 from scipy.io.matlab.mio import savemat, loadmat
 from model import Generator, UNet
 from torch import from_numpy
-import cv2
+import sys
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print('begin')
+model_path = sys.argv[1]
+dev = sys.argv[2]
+DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
 
-def restoration(udc):
+print(model_path, dev, DEVICE)
+exit(0)
+def restoration(udc, model):
     # TODO: plug in your method here
     print('udc.shape', udc.shape)
     # cv2.imshow('img', udc)
     # cv2.waitKey(0)
     data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float().to(DEVICE)
-    model = UNet().to(DEVICE)
-    model.load_state_dict(torch.load(
-        f='pkls/UNet/model_45060.pkl',
-        map_location=DEVICE))
     with torch.no_grad():
         output_batch = model(data_batch).cpu().numpy()
         output_batch = np.where(output_batch < 0, 0, output_batch)
@@ -33,9 +33,15 @@ def restoration(udc):
     # cv2.waitKey(0)
     return result
 
-
 # TODO: update your working directory; it should contain the .mat file containing noisy images
 work_dir = './'
+
+# load model
+model = UNet().to(DEVICE)
+model.load_state_dict(torch.load(
+    f=os.path.join(work_dir, model_path),
+    map_location=DEVICE)
+)
 
 # load noisy images
 udc_fn = 'toled_val_display.mat'  # or poled_val_display.mat
@@ -47,7 +53,7 @@ n_im, h, w, c = udc_mat.shape
 results = udc_mat.copy()
 for i in range(n_im):
     udc = np.reshape(udc_mat[i, :, :, :], (h, w, c))
-    restored = restoration(udc)
+    restored = restoration(udc, model)
     results[i, :, :, :] = restored
 
 # create results directory
