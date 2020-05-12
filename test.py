@@ -13,15 +13,30 @@
 
 from torch.utils.data import DataLoader
 from dataloader import PairedData
-from model import UNet
+from model import UNet, CNN
 from tester import Tester
 from utils import compute_PSNR
 import torch, sys
 
-model_path = sys.argv[1]
-dev = sys.argv[2]
+model_name = sys.argv[1]
+pkl_dir = sys.argv[2]
+dev = sys.argv[3]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
-print(model_path, DEVICE)
+print(model_name, pkl_dir, DEVICE)
+
+if model_name == 'UNet-16':
+	model = UNet(N=16)
+elif model_name == 'UNet-32':
+	model = UNet(N=32)
+elif model_name == 'UNet-64':
+	model = UNet(N=64)
+elif model_name == 'CNN':
+	model = CNN(N=32)
+else:
+	model = None
+	print('>>> Model name:{} invalid!')
+	exit(-1)
+# run "python train.py ./pkls UNet-16"
 
 if __name__ == '__main__':
 	# load train data
@@ -29,9 +44,11 @@ if __name__ == '__main__':
 	print(len(test_datasets))
 	test_loader = DataLoader(test_datasets, batch_size=1, shuffle=False)
 	# create model for Image-Restoration
-	model = UNet(N=32).to(DEVICE)
 	model.load_state_dict(torch.load(
-		f='pkls/UNet/model_28760.pkl',
+		f=pkl_dir,
 		map_location=DEVICE))
-	tester = Tester(dataloader=test_loader, network=model, functions=[compute_PSNR])
+	tester = Tester(dataloader=test_loader,
+	                network=model,
+	                functions=[compute_PSNR],
+	                device=DEVICE)
 	tester.test()

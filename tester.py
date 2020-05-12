@@ -14,14 +14,14 @@ import torch
 import sys
 class Tester(object):
 	""" The class to test networks"""
-	def __init__(self, dataloader, network, functions):
+	def __init__(self, dataloader, network, functions, device):
 		"""
 		:param dataloader:  a test dataloader object
 		:param network:     a trained network
 		:param functions:   a list of functions of which each has two parameters
 			to compute test indexes, and the test indexes must be a number.
 		"""
-		self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+		self.device = device
 		print('device:', self.device)
 		self.dataloader = dataloader
 		self.net = network.to(self.device)

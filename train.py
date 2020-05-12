@@ -36,7 +36,7 @@ else:
 	model = None
 	print('>>> Model name:{} invalid!')
 	exit(-1)
-# run "python train.py UNet-16"
+# run "python train.py ./pkls UNet-16"
 
 if __name__ == '__main__':
 	# load train data
