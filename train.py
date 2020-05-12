@@ -42,7 +42,7 @@ if __name__ == '__main__':
 	# load train data
 	train_datasets= PairedData(datadir='data/Train/Toled', npy=True)
 	eval_datasets= PairedData(datadir='data/Eval/Toled', npy=False)
-	train_loader = DataLoader(train_datasets, batch_size=32, shuffle=True)
+	train_loader = DataLoader(train_datasets, batch_size=16, shuffle=True)
 	eval_loader = DataLoader(eval_datasets, batch_size=1, shuffle=False)
 	# create model for Image-Restoration
 	trainer = Trainer(train_data_loader=train_loader,
