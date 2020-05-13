@@ -74,19 +74,18 @@ def _image_rotate(img)->list:
 
 def _image_enhance(img, only_crop=False)->list:
 	imgs_cropped = image_crop(img)
-	# return imgs_cropped
-	results = []
-	for img_ in imgs_cropped:
-		if not only_crop:
+	if only_crop:
+		return imgs_cropped
+	else:
+		results = []
+		for img_ in imgs_cropped:
 			img_flipped_y = cv2.flip(img_, 1)         # flip the image around y-axis
 			img_flipped_x = cv2.flip(img_, 0)         # flip the image around x-axis
 			img_flipped_xy = cv2.flip(img_, -1)       # flip the image around x- and y-axis
 			# img_transposed = cv2.transpose(img)     # transpose the image
 			results.extend([img_, img_flipped_xy, img_flipped_x, img_flipped_y])
-		else:
-			results.append(img_)
-	# print(np.array(results).shape)
-	return results
+		# print(np.array(results).shape)
+		return results
 
 def _imgs2npy(img_dir_path, out_path, enhance, only_crop):
 	imgs = read_imgs_from_dir(img_dir_path,
