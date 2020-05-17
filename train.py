@@ -19,10 +19,11 @@ import torch.nn.functional as F
 import sys, torch, os.path
 
 model_name = sys.argv[1]
-pkls_dir = sys.argv[2]
-dev = sys.argv[3]
+batch_size = sys.argv[2]
+pkls_dir = sys.argv[3]
+dev = sys.argv[4]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
-print(model_name, pkls_dir, DEVICE)
+print(model_name, batch_size, pkls_dir, DEVICE)
 
 if model_name == 'UNet-16':
 	model = UNet(N=16)
@@ -47,7 +48,7 @@ if __name__ == '__main__':
 	                  eval_dataset=eval_dataset,
 	                  network=model,
 	                  loss_function=F.l1_loss,
-	                  batch_size=4,
+	                  batch_size=batch_size,
 	                  learning_rate=1e-4,
 	                  epoch=400,
 	                  pkls_dir=os.path.join(pkls_dir, model_name),
