@@ -41,7 +41,7 @@ else:
 
 if __name__ == '__main__':
 	# load train data
-	train_dataset = TrainDataset(datadir='data/Train/Toled')
+	train_dataset = TrainDataset(datadir='data/Train/Toled', npy=True)
 	eval_dataset = EvalDataset(datadir='data/Eval/Toled', npy=True)
 	# create model for Image-Restoration
 	trainer = Trainer(train_dataset=train_dataset,

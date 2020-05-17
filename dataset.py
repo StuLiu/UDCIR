@@ -43,8 +43,11 @@ class TrainDataset(Dataset):
 	def __init__(self, width=256, datadir='data/Train/Toled', npy=True):
 		self.width = width
 		if npy:
-			self.X = np.load(os.path.join(datadir, 'LQ.npy'))
-			self.Y = np.load(os.path.join(datadir, 'HQ.npy'))
+			# read images from .npy, (N, c, h, w), (N, c, h, w)
+			x_origin = np.load(os.path.join(datadir, 'LQ.npy'))
+			y_origin = np.load(os.path.join(datadir, 'HQ.npy'))
+			self.x_origin = np.transpose(x_origin, (0, 2, 3, 1))
+			self.y_origin = np.transpose(y_origin, (0, 2, 3, 1))
 		else:
 			# read images from file system, (N, h, w, c), (N, h, w, c)
 			self.x_origin = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
@@ -108,7 +111,7 @@ class TrainDataset(Dataset):
 # np.ndarray.astype()
 if __name__ == '__main__':
 	# load train data
-	myDatasets= TrainDataset(datadir='data/Eval/Toled')
+	myDatasets= TrainDataset(datadir='data/Eval/Toled', npy=False)
 	while True:
 		train_loader = DataLoader(myDatasets, batch_size=32, shuffle=False)
 		x_eval, y_eval = [], []
