@@ -49,7 +49,7 @@ class Trainer(object):
 			os.makedirs(self.pkls_dir)
 		if not os.path.exists(self.summary_dir):
 			os.makedirs(self.summary_dir)
-		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=2, gamma=0.9)
+		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=4, gamma=0.95)
 		print(self.batch_size, self.lr, self.epoch)
 
 	def train(self):
