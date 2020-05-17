@@ -21,13 +21,12 @@ class Step(nn.Module):
 		super(Step, self).__init__()
 		self.conv_0 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
 		self.conv_1 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
-		# self.conv_2 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
+		self.conv_2 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
 
 	def forward(self, x):
 		x1 = F.leaky_relu(self.conv_0(x), 0.2)
-		x3 = F.leaky_relu(self.conv_1(x1), 0.2)
-		# x2 = F.leaky_relu(self.conv_1(x1), 0.2) + x
-		# x3 = F.leaky_relu(self.conv_2(x2), 0.2) + x1
+		x2 = F.leaky_relu(self.conv_1(x1), 0.2) + x
+		x3 = F.leaky_relu(self.conv_2(x2), 0.2) + x1
 		return x3
 
 class UNet(nn.Module):
@@ -35,26 +34,26 @@ class UNet(nn.Module):
 	def __init__(self, input_c=3, output_c=3, N=32):
 		super(UNet, self).__init__()
 		# def the operations in UNet
-		self.conv_input = nn.Conv2d(input_c, N, kernel_size=3, stride=1, padding=1)
-		self.step_0 = Step(N=N)
-		self.down_0 = nn.Conv2d(N, N * 2, kernel_size=3, stride=2, padding=1)
-		self.step_1 = Step(N=N * 2)
-		self.down_1 = nn.Conv2d(N * 2, N * 4, kernel_size=3, stride=2, padding=1)
-		self.step_2 = Step(N=N * 4)
-		self.down_2 = nn.Conv2d(N * 4, N * 8, kernel_size=3, stride=2, padding=1)
-		self.step_3 = Step(N=N * 8)
-		self.down_3 = nn.Conv2d(N * 8, N * 16, kernel_size=3, stride=2, padding=1)
+		self.conv_input = nn.Conv2d(input_c, N * 8, kernel_size=3, stride=1, padding=1)
+		self.step_0 = Step(N=N * 8)
+		self.down_0 = nn.Conv2d(N * 8, N * 8, kernel_size=3, stride=2, padding=1)
+		self.step_1 = Step(N=N * 8)
+		self.down_1 = nn.Conv2d(N * 8, N * 8, kernel_size=3, stride=2, padding=1)
+		self.step_2 = Step(N=N * 8)
+		self.down_2 = nn.Conv2d(N * 8, N * 16, kernel_size=3, stride=2, padding=1)
+		self.step_3 = Step(N=N * 16)
+		self.down_3 = nn.Conv2d(N * 16, N * 16, kernel_size=3, stride=2, padding=1)
 		self.step_4 = Step(N=N * 16)
 		self.step_5 = Step(N=N * 16)
-		self.up_0 = nn.ConvTranspose2d(N * 16, N * 8, kernel_size=4, stride=2, padding=1)
-		self.step_6 = Step(N=N * 8)
-		self.up_1 = nn.ConvTranspose2d(N * 8, N * 4, kernel_size=4, stride=2, padding=1)
-		self.step_7 = Step(N=N * 4)
-		self.up_2 = nn.ConvTranspose2d(N * 4, N * 2, kernel_size=4, stride=2, padding=1)
-		self.step_8 = Step(N=N * 2)
-		self.up_3 = nn.ConvTranspose2d(N * 2, N, kernel_size=4, stride=2, padding=1)
-		self.step_9 = Step(N=N)
-		self.conv_output = nn.Conv2d(N, output_c, kernel_size=3, stride=1, padding=1)
+		self.up_0 = nn.ConvTranspose2d(N * 16, N * 16, kernel_size=4, stride=2, padding=1)
+		self.step_6 = Step(N=N * 16)
+		self.up_1 = nn.ConvTranspose2d(N * 16, N * 16, kernel_size=4, stride=2, padding=1)
+		self.step_7 = Step(N=N * 16)
+		self.up_2 = nn.ConvTranspose2d(N * 16, N * 8, kernel_size=4, stride=2, padding=1)
+		self.step_8 = Step(N=N * 8)
+		self.up_3 = nn.ConvTranspose2d(N * 8, N * 8, kernel_size=4, stride=2, padding=1)
+		self.step_9 = Step(N=N * 8)
+		self.conv_output = nn.Conv2d(N * 8, output_c, kernel_size=3, stride=1, padding=1)
 
 
 	def forward(self, x):
