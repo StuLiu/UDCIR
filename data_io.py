@@ -28,7 +28,7 @@ def read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True, only_cr
 	for path in tqdm(img_paths):
 		img_data = cv2.imread(path)    # return the ndarray of image, [high, width, channal(3)]
 		if enhance:
-			img_data_list.extend(_image_enhance(img_data, only_crop=only_crop))
+			img_data_list.extend(image_enhance(img_data, only_crop=only_crop))
 		else:
 			img_data_list.extend([img_data])
 	return np.array(img_data_list)
@@ -72,7 +72,7 @@ def _image_rotate(img)->list:
 	img_cw_270 = cv2.flip(cv2.transpose(img), 0)
 	return [img, img_cw_90, img_cw_180, img_cw_270]
 
-def _image_enhance(img, only_crop=False)->list:
+def image_enhance(img, only_crop=False)->list:
 	imgs_cropped = image_crop(img)
 	if only_crop:
 		return imgs_cropped
