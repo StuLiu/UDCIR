@@ -52,7 +52,7 @@ class TrainDataset(Dataset):
 			# read images from file system, (N, h, w, c), (N, h, w, c)
 			self.x_origin = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
 			self.y_origin = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
-			self.X, self.Y = self._shuffle(self.x_origin, self.y_origin)
+		self.X, self.Y = self._shuffle(self.x_origin, self.y_origin)
 		assert self.X.shape == self.Y.shape, 'data unpaired'
 		self.datasize = len(self.X)
 		print('Loaded {} TrainData from {}.'.format(self.datasize, datadir))
