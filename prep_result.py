@@ -68,8 +68,8 @@ for i in range(n_im):
     udc = np.reshape(udc_mat[i, :, :, :], (h, w, c))
     restored = restoration(udc, model)
     results[i, :, :, :] = restored
-# print(type(results), results[0,0:5,0:5,:])
-# exit(0)
+print(type(results), results[0,0:5,0:5,:])
+exit(0)
 
 # create results directory
 res_dir = 'res_dir'
