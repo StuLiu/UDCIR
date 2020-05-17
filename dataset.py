@@ -18,41 +18,37 @@ from torch import from_numpy
 from torch.utils.data import DataLoader
 from data_io import read_imgs_from_dir
 
-# class PairedData(Dataset):
-# 	def __init__(self, datadir='data/Train/Toled', npy=True):
-# 		if npy:
-# 			self.X = np.load(os.path.join(datadir, 'LQ_256.npy'))
-# 			self.Y = np.load(os.path.join(datadir, 'HQ_256.npy'))
-# 		else:
-# 			x = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
-# 			y = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
-# 			self.X = np.transpose(x, (0, 3, 1, 2))
-# 			self.Y = np.transpose(y, (0, 3, 1, 2))
-# 		assert self.X.shape == self.Y.shape, 'data unpaired'
-# 		self.datasize = len(self.X)
-# 		print('Loaded {} paired data from {}.'.format(self.datasize, datadir))
-# 		print('shape of X and Y:{}.'.format(self.X.shape))
-#
-# 	def __len__(self):
-# 		return self.datasize
-#
-# 	def __getitem__(self, idx):
-# 		return from_numpy(self.X[idx]).float(), from_numpy(self.Y[idx]).float()
-
-class TrainDataset(Dataset):
-	def __init__(self, width=256, datadir='data/Train/Toled', npy=True):
-		self.width = width
+class EvalDataset(Dataset):
+	def __init__(self, datadir='data/Train/Toled', npy=True):
 		if npy:
-			self.X = np.load(os.path.join(datadir, 'LQ_256.npy'))
-			self.Y = np.load(os.path.join(datadir, 'HQ_256.npy'))
+			self.X = np.load(os.path.join(datadir, 'LQ.npy'))
+			self.Y = np.load(os.path.join(datadir, 'HQ.npy'))
 		else:
-			# read images from file system, (N, h, w, c), (N, h, w, c)
-			self.x_origin = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
-			self.y_origin = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
-			self.X, self.Y = self._shuffle(self.x_origin, self.y_origin)
+			x = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
+			y = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
+			self.X = np.transpose(x, (0, 3, 1, 2))
+			self.Y = np.transpose(y, (0, 3, 1, 2))
 		assert self.X.shape == self.Y.shape, 'data unpaired'
 		self.datasize = len(self.X)
-		print('Loaded {} paired data from {}.'.format(self.datasize, datadir))
+		print('Loaded {} EvalData from {}.'.format(self.datasize, datadir))
+		print('shape of X and Y:{}.'.format(self.X.shape))
+
+	def __len__(self):
+		return self.datasize
+
+	def __getitem__(self, idx):
+		return from_numpy(self.X[idx]).float(), from_numpy(self.Y[idx]).float()
+
+class TrainDataset(Dataset):
+	def __init__(self, width=256, datadir='data/Train/Toled'):
+		self.width = width
+		# read images from file system, (N, h, w, c), (N, h, w, c)
+		self.x_origin = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
+		self.y_origin = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
+		self.X, self.Y = self._shuffle(self.x_origin, self.y_origin)
+		assert self.X.shape == self.Y.shape, 'data unpaired'
+		self.datasize = len(self.X)
+		print('Loaded {} TrainData from {}.'.format(self.datasize, datadir))
 		print('shape of X and Y:{}.'.format(self.X.shape))
 
 	def __len__(self):
@@ -108,7 +104,7 @@ class TrainDataset(Dataset):
 # np.ndarray.astype()
 if __name__ == '__main__':
 	# load train data
-	myDatasets= TrainDataset(datadir='data/Eval/Toled', npy=False)
+	myDatasets= TrainDataset(datadir='data/Eval/Toled')
 	while True:
 		train_loader = DataLoader(myDatasets, batch_size=32, shuffle=False)
 		x_eval, y_eval = [], []

@@ -11,8 +11,8 @@
 --------------------------------------------------------  
 ''' 
 
-from torch.utils.data import DataLoader
-from dataset import PairedData
+
+from dataset import TrainDataset, EvalDataset
 from model import UNet, CNN
 from trainer import Trainer
 import torch.nn.functional as F
@@ -40,16 +40,16 @@ else:
 
 if __name__ == '__main__':
 	# load train data
-	train_datasets= PairedData(datadir='data/Train/Toled', npy=True)
-	eval_datasets= PairedData(datadir='data/Eval/Toled', npy=True)
-	train_loader = DataLoader(train_datasets, batch_size=16, shuffle=True)
-	eval_loader = DataLoader(eval_datasets, batch_size=1, shuffle=False)
+	train_dataset = TrainDataset(datadir='data/Train/Toled')
+	eval_dataset = EvalDataset(datadir='data/Eval/Toled', npy=True)
 	# create model for Image-Restoration
-	trainer = Trainer(train_data_loader=train_loader,
-	                  eval_data_loader=eval_loader,
+	trainer = Trainer(train_dataset=train_dataset,
+	                  eval_dataset=eval_dataset,
 	                  network=model,
 	                  loss_function=F.l1_loss,
-	                  epoch=50,
+	                  batch_size=16,
+	                  learning_rate=1e-4,
+	                  epoch=400,
 	                  pkls_dir=os.path.join(pkls_dir, model_name),
 	                  summary_dir='./summarylogs/{}'.format(model_name))
 	model = trainer.train()

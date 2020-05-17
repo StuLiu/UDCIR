@@ -14,16 +14,18 @@ import sys, os, time
 import torch
 import torch.nn.functional as F
 import torch.optim.lr_scheduler as lr_scheduler
+from torch.utils.data import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from utils import compute_PSNR, keep_newest
 
 class Trainer(object):
 	""" The class to train networks"""
 	def __init__(self,
-	             train_data_loader,
-	             eval_data_loader,
+	             train_dataset,
+	             eval_dataset,
 	             network,
 	             optimizer=torch.optim.Adam,
+	             batch_size=16,
 	             learning_rate=1.0e-4,
 	             epoch=400,
 	             loss_function=F.mse_loss,
@@ -31,10 +33,12 @@ class Trainer(object):
 	             summary_dir='./summarylogs/',):
 		self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 		print('device:', self.device)
-		self.train_data_loader = train_data_loader
-		self.eval_data_loader = eval_data_loader
+		self.train_dataset = train_dataset
+		self.train_data_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
+		self.eval_data_loader = DataLoader(eval_dataset, batch_size=1, shuffle=False)
 		print(len(self.train_data_loader), len(self.eval_data_loader))
 		self.net = network.to(self.device)
+		self.batch_size = batch_size
 		self.lr = learning_rate
 		self.opt = optimizer(self.net.parameters(), lr=self.lr)
 		self.epoch = epoch
@@ -59,10 +63,14 @@ class Trainer(object):
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				if (batch_idx + 1) % 40 == 0 or batch_idx == 0:
+				if (batch_idx + 1) % 50 == 0 or batch_idx == 0:
 					self._eval_and_save(epoch, batch_idx + 1)
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
+			self.train_dataset.shuffle()
+			self.train_data_loader = DataLoader(self.train_dataset,
+			                                    batch_size=self.batch_size,
+			                                    shuffle=False)
 		return self.net
 
 	def _eval_and_save(self, epoch, batch_idx):
