@@ -13,6 +13,7 @@ import sys
 # from preprocess import image_crop, image_splice
 
 print('begin')
+# python prep_result.py UNet-32 pkls/UNet-32/model_16000.pkl cuda
 model_name = sys.argv[1]
 pkl_path = sys.argv[2]
 dev = sys.argv[3]
@@ -41,7 +42,7 @@ def restoration(udc, model):
         output_batch = model(data_batch).cpu().numpy()
         output_batch = np.where(output_batch < 0, 0, output_batch)
         output_batch = np.where(output_batch > 255, 255, output_batch)
-    result = output_batch.transpose((0, 2, 3, 1))[0,:,:,:]
+    result = output_batch.transpose((0, 2, 3, 1))[0,:,:,:].astype('uint8')
     print('result.shape', result.shape)
     # cv2.imshow('img', result)
     # cv2.waitKey(0)
