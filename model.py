@@ -34,9 +34,9 @@ class UNet(nn.Module):
 	def __init__(self, input_c=3, output_c=3, N=32):
 		super(UNet, self).__init__()
 		# def the operations in UNet
-		self.conv_input = nn.Conv2d(input_c, N * 8, kernel_size=3, stride=1, padding=1)
-		self.step_0 = Step(N=N * 8)
-		self.down_0 = nn.Conv2d(N * 8, N * 8, kernel_size=3, stride=2, padding=1)
+		self.conv_input = nn.Conv2d(input_c, N * 4, kernel_size=3, stride=1, padding=1)
+		self.step_0 = Step(N=N * 4)
+		self.down_0 = nn.Conv2d(N * 4, N * 8, kernel_size=3, stride=2, padding=1)
 		self.step_1 = Step(N=N * 8)
 		self.down_1 = nn.Conv2d(N * 8, N * 8, kernel_size=3, stride=2, padding=1)
 		self.step_2 = Step(N=N * 8)
@@ -51,9 +51,9 @@ class UNet(nn.Module):
 		self.step_7 = Step(N=N * 8)
 		self.up_2 = nn.ConvTranspose2d(N * 8, N * 8, kernel_size=4, stride=2, padding=1)
 		self.step_8 = Step(N=N * 8)
-		self.up_3 = nn.ConvTranspose2d(N * 8, N * 8, kernel_size=4, stride=2, padding=1)
-		self.step_9 = Step(N=N * 8)
-		self.conv_output = nn.Conv2d(N * 8, output_c, kernel_size=3, stride=1, padding=1)
+		self.up_3 = nn.ConvTranspose2d(N * 8, N * 4, kernel_size=4, stride=2, padding=1)
+		self.step_9 = Step(N=N * 4)
+		self.conv_output = nn.Conv2d(N * 4, output_c, kernel_size=3, stride=1, padding=1)
 
 
 	def forward(self, x):
