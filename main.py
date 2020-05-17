@@ -15,7 +15,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
-from dataloader import PairedData
+from dataset import PairedData
 from torchvision import datasets, transforms
 from trainer import Trainer
 from tester import Tester

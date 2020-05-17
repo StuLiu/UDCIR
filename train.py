@@ -12,7 +12,7 @@
 ''' 
 
 from torch.utils.data import DataLoader
-from dataloader import PairedData
+from dataset import PairedData
 from model import UNet, CNN
 from trainer import Trainer
 import torch.nn.functional as F
