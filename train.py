@@ -47,7 +47,7 @@ if __name__ == '__main__':
 	                  eval_dataset=eval_dataset,
 	                  network=model,
 	                  loss_function=F.l1_loss,
-	                  batch_size=16,
+	                  batch_size=8,
 	                  learning_rate=1e-4,
 	                  epoch=400,
 	                  pkls_dir=os.path.join(pkls_dir, model_name),
