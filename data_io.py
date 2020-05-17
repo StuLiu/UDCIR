@@ -106,21 +106,21 @@ if __name__ == '__main__':
 	# cv2.imshow('LQ', read_imgs_from_mat('toled_val_display.mat')[22])
 	# cv2.waitKey(0)
 	_imgs2npy(img_dir_path='data/Train/Toled/HQ',
-	          out_path='data/Train/Toled/HQ_256.npy',
-	          enhance=True,
+	          out_path='data/Train/Toled/HQ.npy',
+	          enhance=False,
 	          only_crop=False)
 	_imgs2npy(img_dir_path='data/Train/Toled/LQ',
-	          out_path='data/Train/Toled/LQ_256.npy',
-	          enhance=True,
-	          only_crop=False)
-	_imgs2npy(img_dir_path='data/Eval/Toled/HQ',
-	          out_path='data/Eval/Toled/HQ.npy',
+	          out_path='data/Train/Toled/LQ.npy',
 	          enhance=False,
 	          only_crop=False)
-	_imgs2npy(img_dir_path='data/Eval/Toled/LQ',
-	          out_path='data/Eval/Toled/LQ.npy',
-	          enhance=False,
-	          only_crop=False)
+	# _imgs2npy(img_dir_path='data/Eval/Toled/HQ',
+	#           out_path='data/Eval/Toled/HQ.npy',
+	#           enhance=False,
+	#           only_crop=False)
+	# _imgs2npy(img_dir_path='data/Eval/Toled/LQ',
+	#           out_path='data/Eval/Toled/LQ.npy',
+	#           enhance=False,
+	#           only_crop=False)
 
 
 

@@ -40,12 +40,16 @@ class EvalDataset(Dataset):
 		return from_numpy(self.X[idx]).float(), from_numpy(self.Y[idx]).float()
 
 class TrainDataset(Dataset):
-	def __init__(self, width=256, datadir='data/Train/Toled'):
+	def __init__(self, width=256, datadir='data/Train/Toled', npy=True):
 		self.width = width
-		# read images from file system, (N, h, w, c), (N, h, w, c)
-		self.x_origin = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
-		self.y_origin = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
-		self.X, self.Y = self._shuffle(self.x_origin, self.y_origin)
+		if npy:
+			self.X = np.load(os.path.join(datadir, 'LQ.npy'))
+			self.Y = np.load(os.path.join(datadir, 'HQ.npy'))
+		else:
+			# read images from file system, (N, h, w, c), (N, h, w, c)
+			self.x_origin = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
+			self.y_origin = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
+			self.X, self.Y = self._shuffle(self.x_origin, self.y_origin)
 		assert self.X.shape == self.Y.shape, 'data unpaired'
 		self.datasize = len(self.X)
 		print('Loaded {} TrainData from {}.'.format(self.datasize, datadir))

@@ -19,7 +19,7 @@ import torch.nn.functional as F
 import sys, torch, os.path
 
 model_name = sys.argv[1]
-batch_size = sys.argv[2]
+batch_size = int(sys.argv[2])
 pkls_dir = sys.argv[3]
 dev = sys.argv[4]
 DEVICE = torch.device("cuda" if torch.cuda.is_available() and dev=='cuda' else "cpu")
