@@ -74,7 +74,7 @@ class TrainDataset(Dataset):
 			index_w = random.randint(0, x.shape[2] - self.width)
 			x_block = x[i, index_h: index_h + self.width, index_w: index_w + self.width, :]
 			y_block = y[i, index_h: index_h + self.width, index_w: index_w + self.width, :]
-			print(x_block.shape, y_block.shape)
+			# print(x_block.shape, y_block.shape)
 			X.extend(self._image_enhance(x_block))
 			Y.extend(self._image_enhance(y_block))
 		X = np.transpose(np.array(X), (0, 3, 1, 2))
