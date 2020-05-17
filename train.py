@@ -41,7 +41,7 @@ else:
 if __name__ == '__main__':
 	# load train data
 	train_datasets= PairedData(datadir='data/Train/Toled', npy=True)
-	eval_datasets= PairedData(datadir='data/Eval/Toled', npy=False)
+	eval_datasets= PairedData(datadir='data/Eval/Toled', npy=True)
 	train_loader = DataLoader(train_datasets, batch_size=16, shuffle=True)
 	eval_loader = DataLoader(eval_datasets, batch_size=1, shuffle=False)
 	# create model for Image-Restoration
@@ -49,7 +49,7 @@ if __name__ == '__main__':
 	                  eval_data_loader=eval_loader,
 	                  network=model,
 	                  loss_function=F.l1_loss,
-	                  epoch=400,
+	                  epoch=50,
 	                  pkls_dir=os.path.join(pkls_dir, model_name),
 	                  summary_dir='./summarylogs/{}'.format(model_name))
 	model = trainer.train()

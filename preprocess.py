@@ -115,12 +115,12 @@ if __name__ == '__main__':
 	          only_crop=False)
 	_imgs2npy(img_dir_path='data/Eval/Toled/HQ',
 	          out_path='data/Eval/Toled/HQ_256.npy',
-	          enhance=True,
-	          only_crop=True)
+	          enhance=False,
+	          only_crop=False)
 	_imgs2npy(img_dir_path='data/Eval/Toled/LQ',
 	          out_path='data/Eval/Toled/LQ_256.npy',
-	          enhance=True,
-	          only_crop=True)
+	          enhance=False,
+	          only_crop=False)
 
 
 
