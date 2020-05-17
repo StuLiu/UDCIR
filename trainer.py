@@ -64,7 +64,7 @@ class Trainer(object):
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				if (batch_idx + 1) % 50 == 0 or batch_idx == 0:
+				if (batch_idx + 1) % 100 == 0 or batch_idx == 0:
 					self._eval_and_save(epoch, batch_idx + 1)
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
