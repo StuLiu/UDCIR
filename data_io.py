@@ -112,14 +112,14 @@ if __name__ == '__main__':
 	          out_path='data/Train/Toled/LQ.npy',
 	          enhance=False,
 	          only_crop=False)
-	# _imgs2npy(img_dir_path='data/Eval/Toled/HQ',
-	#           out_path='data/Eval/Toled/HQ.npy',
-	#           enhance=False,
-	#           only_crop=False)
-	# _imgs2npy(img_dir_path='data/Eval/Toled/LQ',
-	#           out_path='data/Eval/Toled/LQ.npy',
-	#           enhance=False,
-	#           only_crop=False)
+	_imgs2npy(img_dir_path='data/Eval/Toled/HQ',
+	          out_path='data/Eval/Toled/HQ.npy',
+	          enhance=False,
+	          only_crop=False)
+	_imgs2npy(img_dir_path='data/Eval/Toled/LQ',
+	          out_path='data/Eval/Toled/LQ.npy',
+	          enhance=False,
+	          only_crop=False)
 
 
 
