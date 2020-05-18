@@ -91,12 +91,11 @@ def _imgs2npy(img_dir_path, out_path, enhance, only_crop):
 	imgs = read_imgs_from_dir(img_dir_path,
 	                          enhance=enhance,
 	                          only_crop=only_crop)      # (N, h, w, c)
-	imgs = np.transpose(imgs, (0, 3, 1, 2))             # (N, c, h, w)
 	print(imgs.shape)
 	np.save(out_path, imgs)
-	# cv2.imshow('HQ', np.transpose(HQ[22], (1, 2, 0)))
+	# cv2.imshow('HQ', HQ[22])
 	# cv2.waitKey(0)
-	# cv2.imshow('LQ', np.transpose(LQ[22], (1, 2, 0)))
+	# cv2.imshow('LQ', LQ[22])
 	# cv2.waitKey(0)
 	print('saved to npy.')
 
