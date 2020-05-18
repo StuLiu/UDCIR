@@ -81,8 +81,9 @@ class Trainer(object):
 			for batch_idx_eval, (data_eval, target_eval) in enumerate(self.eval_data_loader):
 				data_eval, target_eval = data_eval.to(self.device), target_eval.to(self.device)
 				output_eval = self.net(data_eval)
-				eval_loss_sum += self.loss_F(output_eval, target_eval).item()
-				eval_psnr_sum += compute_PSNR(output_eval.cpu().numpy(), target_eval.cpu().numpy())
+				eval_loss_sum += self.loss_F(output_eval * 255, target_eval * 255).item()
+				eval_psnr_sum += compute_PSNR(output_eval.cpu().numpy() * 255,
+				                              target_eval.cpu().numpy() * 255)
 			eval_loss = eval_loss_sum / len(self.eval_data_loader)
 			eval_psnr = eval_psnr_sum / len(self.eval_data_loader)
 			sys.stdout.write('\r{} Train Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.4f}\tPSNR:{:.2f}'
