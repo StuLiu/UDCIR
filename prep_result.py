@@ -8,9 +8,9 @@ import torch
 from scipy.io.matlab.mio import savemat, loadmat
 from model import UNet, CNN
 from torch import from_numpy
+from torchvision import transforms
 import sys
-# import cv2
-# from preprocess import image_crop, image_splice
+import cv2
 
 print('begin')
 # python prep_result.py UNet-32 pkls/UNet-32/model_16000.pkl cuda
@@ -35,14 +35,15 @@ else:
 def restoration(udc, model):
     # TODO: plug in your method here
     print('udc.shape', udc.shape)
+    h, w, c = udc.shape
     # cv2.imshow('img', udc)
     # cv2.waitKey(0)
-    data_batch = from_numpy(np.array([udc]).transpose((0, 3, 1, 2))).float().to(DEVICE)
+    data_batch = transforms.ToTensor()(udc).view(1, c, h, w).to(DEVICE)
     with torch.no_grad():
         output_batch = model(data_batch).cpu().numpy()
         output_batch = np.where(output_batch < 0, 0, output_batch)
         output_batch = np.where(output_batch > 255, 255, output_batch)
-    result = output_batch.transpose((0, 2, 3, 1))[0,:,:,:].astype('uint8')
+    result = (output_batch.transpose((0, 2, 3, 1))[0,:,:,:] * 255).astype('uint8')
     print('result.shape', result.shape)
     # cv2.imshow('img', result)
     # cv2.waitKey(0)
