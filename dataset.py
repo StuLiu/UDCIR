@@ -14,7 +14,7 @@ from torch.utils.data import Dataset
 import os.path
 import numpy as np
 import random, cv2, time
-from torch import from_numpy
+from torchvision import transforms
 from torch.utils.data import DataLoader
 from data_io import read_imgs_from_dir
 
@@ -24,11 +24,10 @@ class EvalDataset(Dataset):
 			self.X = np.load(os.path.join(datadir, 'LQ.npy'))
 			self.Y = np.load(os.path.join(datadir, 'HQ.npy'))
 		else:
-			x = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
-			y = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
-			self.X = np.transpose(x, (0, 3, 1, 2))
-			self.Y = np.transpose(y, (0, 3, 1, 2))
+			self.X = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
+			self.Y = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
 		assert self.X.shape == self.Y.shape, 'data unpaired'
+		self.transform = transforms.ToTensor()
 		self.datasize = len(self.X)
 		print('Loaded {} EvalData from {}.'.format(self.datasize, datadir))
 		print('shape of X and Y:{}.'.format(self.X.shape))
@@ -37,23 +36,22 @@ class EvalDataset(Dataset):
 		return self.datasize
 
 	def __getitem__(self, idx):
-		return from_numpy(self.X[idx]).float(), from_numpy(self.Y[idx]).float()
+		return self.transform(self.X[idx]), self.transform(self.Y[idx])
 
 class TrainDataset(Dataset):
 	def __init__(self, width=256, datadir='data/Train/Toled', npy=True):
 		self.width = width
 		if npy:
-			# read images from .npy, (N, c, h, w), (N, c, h, w)
-			x_origin = np.load(os.path.join(datadir, 'LQ.npy'))
-			y_origin = np.load(os.path.join(datadir, 'HQ.npy'))
-			self.x_origin = np.transpose(x_origin, (0, 2, 3, 1))
-			self.y_origin = np.transpose(y_origin, (0, 2, 3, 1))
+			# read images from .npy, (N, h, w, c), (N, h, w, c)
+			self.x_origin = np.load(os.path.join(datadir, 'LQ.npy'))
+			self.y_origin = np.load(os.path.join(datadir, 'HQ.npy'))
 		else:
 			# read images from file system, (N, h, w, c), (N, h, w, c)
 			self.x_origin = read_imgs_from_dir(os.path.join(datadir, 'LQ'), enhance=False)
 			self.y_origin = read_imgs_from_dir(os.path.join(datadir, 'HQ'), enhance=False)
 		self.X, self.Y = self._shuffle(self.x_origin, self.y_origin)
 		assert self.X.shape == self.Y.shape, 'data unpaired'
+		self.transform = transforms.ToTensor()
 		self.datasize = len(self.X)
 		print('Loaded {} TrainData from {}.'.format(self.datasize, datadir))
 		print('shape of X and Y:{}.'.format(self.X.shape))
@@ -62,7 +60,7 @@ class TrainDataset(Dataset):
 		return self.datasize
 
 	def __getitem__(self, idx):
-		return from_numpy(self.X[idx]).float(), from_numpy(self.Y[idx]).float()
+		return self.transform(self.X[idx]), self.transform(self.Y[idx])
 
 	def shuffle(self):
 		self.X, self.Y = self._shuffle(self.x_origin, self.y_origin)
@@ -71,7 +69,7 @@ class TrainDataset(Dataset):
 		""" image enhance: random crop, flip, and rotate
 		:param x: LQ images ndarray with shape (N, h, w, c)
 		:param y: HQ images ndarray with shape (N, h, w, c)
-		:return: LQ and HQ image blocks ndarrays width shape (N, c, self.width, self.width)
+		:return: LQ and HQ image blocks ndarrays width shape (N, self.width, self.width, c)
 		"""
 		assert x.shape == y.shape, 'shape of x and y disaffinity'
 		X, Y = [], []
@@ -84,8 +82,7 @@ class TrainDataset(Dataset):
 			# print(x_block.shape, y_block.shape)
 			X.extend(self._image_enhance(x_block))
 			Y.extend(self._image_enhance(y_block))
-		X = np.transpose(np.array(X), (0, 3, 1, 2))
-		Y = np.transpose(np.array(Y), (0, 3, 1, 2))
+		X , Y = np.array(X, dtype = np.uint8), np.array(Y, dtype = np.uint8)
 		seed = int(time.time())
 		np.random.seed(seed)
 		np.random.shuffle(X)
@@ -117,19 +114,22 @@ if __name__ == '__main__':
 		x_eval, y_eval = [], []
 		for i, (x, y) in enumerate(train_loader):
 			lq, hq = np.transpose(x.cpu().numpy(), (0, 2, 3, 1)), np.transpose(y.cpu().numpy(), (0, 2, 3, 1))
-			print(lq.shape, hq.shape)
-			print(lq[0], hq[0])
-			print(type(lq), type(hq))
+			# print(lq.shape, hq.shape)
+			# print(lq[0], hq[0])
+			# print(type(lq), type(hq))
 			for j in range(len(x)):
 				print(lq[j].shape, hq[j].shape)
 				print(lq[j], hq[j])
 				print(type(lq[j]), type(hq[j]))
-				cv2.imshow('LQ', np.array(lq[j].astype('uint8')))
+				cv2.imshow('LQ', (np.array(lq[j])))
 				cv2.waitKey(0)
-				cv2.imshow('HQ', np.array(hq[j].astype('uint8')))
+				cv2.imshow('HQ', (np.array(hq[j])))
 				cv2.waitKey(0)
+				if j>=4:
+					break
+			if i>=1:
 				break
-			break
+		print('shuffle')
 		myDatasets.shuffle()
 	# 	x_eval.append(x.numpy())
 	# 	y_eval.append(y.numpy())

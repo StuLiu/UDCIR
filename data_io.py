@@ -31,7 +31,7 @@ def read_imgs_from_dir(img_dir_path='data/Train/Toled/HQ', enhance=True, only_cr
 			img_data_list.extend(image_enhance(img_data, only_crop=only_crop))
 		else:
 			img_data_list.extend([img_data])
-	return np.array(img_data_list)
+	return np.array(img_data_list, dtype=np.uint8)
 
 def read_imgs_from_mat(mat_file_path='data/Train/Toled/HQ')->np.ndarray:
 	data_dict = loadmat(mat_file_path)
