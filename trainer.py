@@ -49,7 +49,7 @@ class Trainer(object):
 			os.makedirs(self.pkls_dir)
 		if not os.path.exists(self.summary_dir):
 			os.makedirs(self.summary_dir)
-		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=4, gamma=0.95)
+		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=100, gamma=0.1)
 		print(self.batch_size, self.lr, self.epoch)
 
 	def train(self):
@@ -64,8 +64,9 @@ class Trainer(object):
 				loss_batch = self.loss_F(output, target)
 				loss_batch.backward()
 				self.opt.step()
-				if (batch_idx + 1) % 100 == 0 or batch_idx == 0:
-					self._eval_and_save(epoch, batch_idx + 1)
+				batch_idx_global = batch_idx + (epoch - 1) * len(self.train_data_loader)
+				if (batch_idx_global + 1) % 40 == 0 or batch_idx_global == 0:
+					self._eval_and_save(epoch, batch_idx)
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
 			self.train_dataset.shuffle()
@@ -88,14 +89,14 @@ class Trainer(object):
 			eval_psnr = eval_psnr_sum / len(self.eval_data_loader)
 			sys.stdout.write('\r{} Train Epoch: {} [{}/{} ({:.2f}%)]\tLoss: {:.4f}\tPSNR:{:.2f}'
 				.format(time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time())),
-			            epoch, batch_idx, len(self.train_data_loader),
-			            100. * batch_idx / len(self.train_data_loader),
+			            epoch, batch_idx + 1, len(self.train_data_loader),
+			            100. * (batch_idx + 1) / len(self.train_data_loader),
 			            eval_loss, eval_psnr))
 			with SummaryWriter(log_dir=self.summary_dir, comment='train') as writer:
-				writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'], batch_idx_global)
-				writer.add_scalar('Loss', eval_loss, batch_idx_global)
-				writer.add_scalar('PSNR', eval_psnr, batch_idx_global)
+				writer.add_scalar('lr', self.opt.state_dict()['param_groups'][0]['lr'], batch_idx_global + 1)
+				writer.add_scalar('Loss', eval_loss, batch_idx_global + 1)
+				writer.add_scalar('PSNR', eval_psnr, batch_idx_global + 1)
 			torch.save(self.net.state_dict(), os.path.join(self.pkls_dir,
-			                                               'model_{}.pkl'.format(batch_idx_global)))
-			keep_newest(dir_path=self.pkls_dir, k=500)
+			                                               'model_{}.pkl'.format(batch_idx_global + 1)))
+			keep_newest(dir_path=self.pkls_dir, k=150)
 			sys.stdout.flush()

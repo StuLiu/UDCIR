@@ -50,7 +50,7 @@ if __name__ == '__main__':
 	                  loss_function=F.l1_loss,
 	                  batch_size=batch_size,
 	                  learning_rate=1e-4,
-	                  epoch=500,
+	                  epoch=400,
 	                  pkls_dir=os.path.join(pkls_dir, model_name),
 	                  summary_dir='./summarylogs/{}'.format(model_name))
 	model = trainer.train()
