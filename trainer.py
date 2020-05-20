@@ -49,7 +49,7 @@ class Trainer(object):
 			os.makedirs(self.pkls_dir)
 		if not os.path.exists(self.summary_dir):
 			os.makedirs(self.summary_dir)
-		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=100, gamma=0.1)
+		self.scheduler = lr_scheduler.StepLR(self.opt, step_size=1, gamma=0.98)
 		print(self.batch_size, self.lr, self.epoch)
 
 	def train(self):
@@ -65,7 +65,7 @@ class Trainer(object):
 				loss_batch.backward()
 				self.opt.step()
 				batch_idx_global = batch_idx + (epoch - 1) * len(self.train_data_loader)
-				if (batch_idx_global + 1) % 40 == 0 or batch_idx_global == 0:
+				if (batch_idx_global + 1) % 25 == 0 or batch_idx_global == 0:
 					self._eval_and_save(epoch, batch_idx)
 			sys.stdout.write('\n')
 			self.scheduler.step(epoch)
@@ -98,5 +98,5 @@ class Trainer(object):
 				writer.add_scalar('PSNR', eval_psnr, batch_idx_global + 1)
 			torch.save(self.net.state_dict(), os.path.join(self.pkls_dir,
 			                                               'model_{}.pkl'.format(batch_idx_global + 1)))
-			keep_newest(dir_path=self.pkls_dir, k=150)
+			keep_newest(dir_path=self.pkls_dir, k=200)
 			sys.stdout.flush()
