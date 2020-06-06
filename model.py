@@ -16,17 +16,15 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class ResBlock(nn.Module):
-
+	"""residual block without batch norm"""
 	def __init__(self, N):
 		super(ResBlock, self).__init__()
 		self.conv_0 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
 		self.conv_1 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
-		# self.conv_2 = nn.Conv2d(N, N, kernel_size=3, stride=1, padding=1)
 
 	def forward(self, x):
 		x1 = F.leaky_relu(self.conv_0(x), 0.2)
 		x2 = F.leaky_relu(self.conv_1(x1), 0.2) + x
-		# x3 = F.leaky_relu(self.conv_2(x2), 0.2) + x1
 		return x2
 
 class UNet(nn.Module):
